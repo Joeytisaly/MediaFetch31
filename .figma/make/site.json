@@ -1,0 +1,10 @@
+{
+  "description": "A user-friendly platform enabling seamless communication and interaction in Chinese, designed to support language learners and native speakers alike.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
