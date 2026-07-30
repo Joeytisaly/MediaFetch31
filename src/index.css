@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+
+:root {
+  --tcp-rose: #ed1d55;
+  --tcp-ink: #151521;
+  --tcp-muted: #8d8a93;
+  --tcp-glass: rgba(255, 255, 255, 0.58);
+  --tcp-line: rgba(255, 255, 255, 0.82);
+  --tcp-blue: #afcbe7;
+  font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--tcp-ink);
+  background: #fff9f8;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::selection {
+  background: #ffd9e2;
+  color: #151521;
+}
+
+.tcp-glass {
+  background: var(--tcp-glass);
+  border: 1px solid var(--tcp-line);
+  box-shadow: 0 12px 30px rgba(118, 64, 80, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.tcp-no-scrollbar {
+  scrollbar-width: none;
+}
+
+.tcp-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes tcp-soft-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+.tcp-soft-pulse { animation: tcp-soft-pulse 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tcp-soft-pulse { animation: none; }
+}
+
+
+.tcp-theme-blush,
+.tcp-theme-blue,
+.tcp-theme-mint,
+.tcp-theme-lavender {
+  --tcp-ink: #151521;
+  --tcp-muted: #8d8a93;
+  --tcp-glass: rgba(255, 255, 255, 0.58);
+  --tcp-line: rgba(255, 255, 255, 0.82);
+  --tcp-sheet: #fffafa;
+  --tcp-neutral-action: #f1edf0;
+}
+
+.tcp-theme-blush {
+  --tcp-page: #fff9f8;
+  --tcp-primary: #ed1d55;
+  --tcp-primary-wash: #ffd4df;
+  --tcp-primary-soft: #fff0f4;
+  --tcp-primary-pale: #fff3f6;
+  --tcp-primary-muted: #f5edf0;
+  --tcp-overlay: #7b4054;
+  --tcp-progress: #afcbe7;
+  --tcp-progress-soft: #e7f1fb;
+  --tcp-progress-strong: #8dbce3;
+  --tcp-section-label: #a18d94;
+  --tcp-canvas: radial-gradient(circle at 80% 28%, rgba(255,255,255,.9), transparent 27%), radial-gradient(circle at 17% 25%, #f3b8c4, transparent 42%), radial-gradient(circle at 68% 68%, #f4bbc6, transparent 38%), linear-gradient(180deg, #f5bbc6 0%, #fad4d7 45%, #fff9f8 100%);
+  --tcp-canvas-shadow: rgba(135, 76, 91, .18);
+}
+
+.tcp-theme-blue {
+  --tcp-page: #f5faff;
+  --tcp-primary: #287fbd;
+  --tcp-primary-wash: #cfe9f9;
+  --tcp-primary-soft: #edf8ff;
+  --tcp-primary-pale: #f2faff;
+  --tcp-primary-muted: #edf4f8;
+  --tcp-overlay: #345a78;
+  --tcp-progress: #76b9e6;
+  --tcp-progress-soft: #e1f2fd;
+  --tcp-progress-strong: #529fd4;
+  --tcp-section-label: #6d91aa;
+  --tcp-canvas: radial-gradient(circle at 80% 28%, rgba(255,255,255,.92), transparent 27%), radial-gradient(circle at 17% 25%, #b9d9ee, transparent 42%), radial-gradient(circle at 68% 68%, #c4e3f4, transparent 38%), linear-gradient(180deg, #b6d8ee 0%, #d9effa 45%, #f5faff 100%);
+  --tcp-canvas-shadow: rgba(67, 122, 161, .18);
+}
+
+.tcp-canvas {
+  background: var(--tcp-canvas);
+  box-shadow: 0 16px 58px var(--tcp-canvas-shadow);
+}
+
+.tcp-theme-mint {
+  --tcp-page: #f4fcf8;
+  --tcp-primary: #218c72;
+  --tcp-primary-wash: #cbeee1;
+  --tcp-primary-soft: #edfaf4;
+  --tcp-primary-pale: #f2fbf7;
+  --tcp-primary-muted: #edf6f1;
+  --tcp-overlay: #3e7161;
+  --tcp-progress: #78c8b1;
+  --tcp-progress-soft: #e0f5ec;
+  --tcp-progress-strong: #55a98e;
+  --tcp-section-label: #6d9c8d;
+  --tcp-canvas: radial-gradient(circle at 80% 28%, rgba(255,255,255,.92), transparent 27%), radial-gradient(circle at 17% 25%, #bfe5d5, transparent 42%), radial-gradient(circle at 68% 68%, #cfeee0, transparent 38%), linear-gradient(180deg, #b9e2d1 0%, #dcefe5 45%, #f4fcf8 100%);
+  --tcp-canvas-shadow: rgba(71, 135, 111, .18);
+}
+
+.tcp-theme-lavender {
+  --tcp-page: #faf8ff;
+  --tcp-primary: #7659ad;
+  --tcp-primary-wash: #e2d7f5;
+  --tcp-primary-soft: #f5f0ff;
+  --tcp-primary-pale: #faf7ff;
+  --tcp-primary-muted: #f2eef8;
+  --tcp-overlay: #5e4b84;
+  --tcp-progress: #a99ad8;
+  --tcp-progress-soft: #eeeafb;
+  --tcp-progress-strong: #8876c3;
+  --tcp-section-label: #9282b2;
+  --tcp-canvas: radial-gradient(circle at 80% 28%, rgba(255,255,255,.92), transparent 27%), radial-gradient(circle at 17% 25%, #d8c8ee, transparent 42%), radial-gradient(circle at 68% 68%, #e4d9f5, transparent 38%), linear-gradient(180deg, #d5c4ec 0%, #ece4f8 45%, #faf8ff 100%);
+  --tcp-canvas-shadow: rgba(104, 83, 151, .18);
+}
+
+
+.tcp-theme-deep {
+  --tcp-page: #0c1b2b;
+  --tcp-ink: #eef7ff;
+  --tcp-muted: #acc1d1;
+  --tcp-glass: rgba(26, 54, 80, .72);
+  --tcp-line: rgba(193, 228, 249, .16);
+  --tcp-sheet: #142d46;
+  --tcp-neutral-action: #203c56;
+  --tcp-primary: #76c2ed;
+  --tcp-primary-wash: #1f4b6e;
+  --tcp-primary-soft: #173a58;
+  --tcp-primary-pale: #1a405e;
+  --tcp-primary-muted: #1c3c58;
+  --tcp-overlay: #06121f;
+  --tcp-progress: #70bde8;
+  --tcp-progress-soft: #173a58;
+  --tcp-progress-strong: #a8dafa;
+  --tcp-section-label: #89a9c0;
+  --tcp-canvas: radial-gradient(circle at 79% 18%, rgba(92, 178, 223, .18), transparent 25%), radial-gradient(circle at 14% 24%, #1b4261, transparent 42%), radial-gradient(circle at 70% 70%, #102e49, transparent 40%), linear-gradient(180deg, #102a42 0%, #0b2034 50%, #081827 100%);
+  --tcp-canvas-shadow: rgba(1, 8, 16, .45);
+}
+
+.tcp-theme-deep .bg-white { background-color: rgba(28, 57, 83, .9); }
+.tcp-theme-deep .bg-white\/55 { background-color: rgba(31, 64, 92, .62); }
+.tcp-theme-deep .bg-white\/70 { background-color: rgba(31, 64, 92, .78); }
+.tcp-theme-deep .text-\[\#aaa6af\] { color: #93afc3; }
+.tcp-theme-deep .border-white\/70,
+.tcp-theme-deep .border-white\/80 { border-color: rgba(210, 237, 255, .2); }
