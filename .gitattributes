@@ -11,7 +11,6 @@
 *.tiff               filter=lfs diff=lfs merge=lfs -text
 *.tif                filter=lfs diff=lfs merge=lfs -text
 *.ico                filter=lfs diff=lfs merge=lfs -text
-*.webp               filter=lfs diff=lfs merge=lfs -text
 *.psd                filter=lfs diff=lfs merge=lfs -text
 *.ai                 filter=lfs diff=lfs merge=lfs -text
 *.sketch             filter=lfs diff=lfs merge=lfs -text
@@ -121,7 +120,6 @@
 # ---------------------------------------------------------------------------
 # Build Artifacts & Packages
 # ---------------------------------------------------------------------------
-*.jar                filter=lfs diff=lfs merge=lfs -text
 *.war                filter=lfs diff=lfs merge=lfs -text
 *.ear                filter=lfs diff=lfs merge=lfs -text
 *.apk                filter=lfs diff=lfs merge=lfs -text
