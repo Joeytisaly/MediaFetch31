@@ -4,37 +4,19 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mediafetch"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
-
+    namespace = "com.tcpg007014.tcpgyt"
+    compileSdk { version = release(36) { minorApiLevel = 1 } }
     defaultConfig {
-        applicationId = "com.example.mediafetch"
+        applicationId = "com.tcpg007014.tcpgyt"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    buildTypes {
-        release {
-            optimization {
-                enable = false
-            }
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        compose = true
-    }
+    buildTypes { release { optimization { enable = false } } }
+    compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
+    buildFeatures { compose = true }
 }
 
 dependencies {
