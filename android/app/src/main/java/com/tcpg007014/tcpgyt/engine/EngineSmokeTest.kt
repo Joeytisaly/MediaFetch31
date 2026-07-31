@@ -15,7 +15,7 @@ object EngineSmokeTest {
             engine.init()
             val probe = engine.probe(url)
             buildString {
-                appendLine("✓ 初始化成功")
+                appendLine("✓ 初始化成功(yt-dlp + ffmpeg)")
                 appendLine("✓ 解析成功")
                 appendLine("标题:${probe.title ?: "(无)"}")
                 append("时长:${probe.durationSeconds} 秒")

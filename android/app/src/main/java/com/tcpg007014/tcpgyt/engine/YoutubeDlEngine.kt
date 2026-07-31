@@ -1,6 +1,7 @@
 package com.tcpg007014.tcpgyt.engine
 
 import android.content.Context
+import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLException
 import com.yausername.youtubedl_android.YoutubeDLRequest
@@ -22,6 +23,8 @@ class YoutubeDlEngine(private val appContext: Context) : DownloadEngine {
     override suspend fun init() = withContext(Dispatchers.IO) {
         try {
             YoutubeDL.init(appContext)
+            // ffmpeg 与 yt-dlp 同属底层引擎的初始化(解压 libffmpeg.zip.so),一并封装在此。
+            FFmpeg.init(appContext)
         } catch (e: YoutubeDLException) {
             throw EngineInitException("下载引擎初始化失败", e)
         }

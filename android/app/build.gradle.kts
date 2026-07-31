@@ -19,6 +19,15 @@ android {
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
     buildFeatures { compose = true }
     packaging { jniLibs { useLegacyPackaging = true } }
+    // ffmpeg AAR ≈133MB(全 4 ABI);按 ABI 分包,单包只含该 ABI 的原生库,避免合包过大。
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+            isUniversalApk = false
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +42,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.youtubedl.android.library)
+    implementation(libs.ffmpeg)
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

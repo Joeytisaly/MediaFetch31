@@ -1,74 +1,73 @@
-# Phase E 切片 E-002:引入 kotlinx-coroutines + 引擎改 suspend + 最小冒烟入口
+# Phase E 切片 E-003(D-002):引入 ffmpeg 依赖 + ABI splits + 引擎 init 收纳 ffmpeg
 
 ## Context(为什么做)
 
-E-001 已让引擎骨架(`DownloadEngine` 接口 + `YoutubeDlEngine` 实现)入 build 并构建成功,但方法当前是**阻塞式**,注释里明确写着"结构化并发将随经批准的 kotlinx-coroutines 依赖后续引入"。本切片兑现这一步:
+E-002 已落地并**编译成功**(coroutines + 引擎 suspend + 冒烟入口)。用户选定推进 **D-002 ffmpeg**,并采纳我的建议:**加 ffmpeg 的同时开 ABI splits 控体积**;**版本号不改**(维持 `versionName="1.0"` / `versionCode=1`);ffmpeg 依赖已获批。
 
-1. 让引擎方法可安全地在后台执行并支持**结构化取消**(取消协程 → 销毁底层 yt-dlp 进程),这是后续接 UI/ViewModel/前台服务的前提。
-2. 提供一个**最小可运行冒烟入口**,让用户能在真机上验证 `init` + `probe` 真的跑通(底层解压 python/yt-dlp、能解析出标题/时长),而不是只"能编译"。
-
-用户已批准该方案("同意你的方案")。本文件即 先审后写 变更方案,待用户确认精确版本后再落笔。
+ffmpeg 用于下载 DASH 分离流后的音视频合并/格式转换。本切片只把依赖入 build、控住体积、并让引擎在 init 阶段一并初始化 ffmpeg,使冒烟入口能验证"ffmpeg 已就位"。真正的下载落盘/后处理调用属后续切片。
 
 ## 依赖核实(官方来源,已完成)
 
-- 组件:`org.jetbrains.kotlinx:kotlinx-coroutines-android`
-- 精确版本:**`1.11.0`**(最新稳定版)
-- 来源:Maven Central `repo1.maven.org/.../kotlinx-coroutines-android/1.11.0/` + GitHub Release `Kotlin/kotlinx.coroutines` tag `1.11.0`
-- 许可:**Apache-2.0**(POM `<licenses>` 核实)
-- 兼容依据:1.11.0 由 **Kotlin 2.2.20** 编译;项目 Kotlin 2.4.10 更新,Kotlin 元数据向前兼容(新编译器可消费旧元数据),安全。仅引入 `-android` 构件,它传递依赖 `-core`,无需单列。
-- 保守替代:`1.10.2`(2025-04 稳定版)可作回退,若用户偏好更成熟版本。
+- 组件:`io.github.junkfood02.youtubedl-android:ffmpeg`,版本 **`0.18.1`**(复用现有 `youtubedlAndroid` 版本引用,与 library 同版)。
+- 来源:Maven Central `.../youtubedl-android/ffmpeg/0.18.1/`(POM + AAR 均 HTTP 200;AAR ≈ **133 MB**,含 4 ABI 的 FFmpeg 原生库)。
+- 许可:POM 声明 **GPL-3.0**;打包的 FFmpeg 二进制另受 FFmpeg 上游许可(LGPL/GPL)。与项目 GPL-3.0 开源路线兼容。**归属声明属后续必办项(见范围外)**。
+- 新增传递依赖:`androidx.appcompat:1.4.2`、`commons-io:2.5`(纯 Compose 项目此前无 appcompat);core-ktx/kotlin-stdlib 由 Gradle 收敛到已有更高版本。
+- FFmpeg API 核实(源码 tag 0.18.1):`object com.yausername.ffmpeg.FFmpeg`,`@Synchronized fun init(appContext: Context)`,失败抛 `YoutubeDLException`。
 
-## 变更清单
+## 变更清单(4 个文件)
 
 ### 1. `android/gradle/libs.versions.toml`
-- `[versions]` 增:`coroutines = "1.11.0"`
-- `[libraries]` 增:`kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }`
+- `[libraries]` 增:`ffmpeg = { group = "io.github.junkfood02.youtubedl-android", name = "ffmpeg", version.ref = "youtubedlAndroid" }`
 
 ### 2. `android/app/build.gradle.kts`
-- `dependencies { }` 增:`implementation(libs.kotlinx.coroutines.android)`
+- `dependencies { }` 增:`implementation(libs.ffmpeg)`
+- `android { }` 增 ABI 分包(控住 133MB AAR → 每 ABI 独立 APK):
+  ```kotlin
+  splits {
+      abi {
+          isEnable = true
+          reset()
+          include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+          isUniversalApk = false
+      }
+  }
+  ```
+  保留现有 `ndk { abiFilters ... }` 与 `packaging { jniLibs { useLegacyPackaging = true } }`(ffmpeg 同样在运行时解压 `libffmpeg.zip.so`,需 legacy packaging)。
 
-### 3. `.../engine/DownloadEngine.kt`(接口)
-- `init()` → `suspend fun init()`;`probe(url)` → `suspend`;`download(...)` → `suspend`
-- `cancel(taskId): Boolean` 保持非 suspend(即发即忘,供只持有 taskId 时使用)
-- 更新 KDoc:线程约定改为"挂起函数,内部切 `Dispatchers.IO`;取消随协程结构化传播"。
+### 3. `.../engine/YoutubeDlEngine.kt`(init 收纳 ffmpeg)
+- `import com.yausername.ffmpeg.FFmpeg`
+- `init()` 内,`YoutubeDL.init(appContext)` 之后加 `FFmpeg.init(appContext)`,同一 `try` 捕获 `YoutubeDLException` → `EngineInitException`。
+- 边界:FFmpeg 完全封装在引擎实现内,UI/ViewModel 不接触(ADR §3/§8)。
 
-### 4. `.../engine/YoutubeDlEngine.kt`(实现)
-- `init` / `probe`:`withContext(Dispatchers.IO) { ... }` 包裹现有逻辑,行为不变。
-- `download`:`withContext(Dispatchers.IO)` 包裹;用 `coroutineContext[Job]?.invokeOnCompletion { if (it is CancellationException) YoutubeDL.destroyProcessById(taskId) }` 实现结构化取消(协程被取消 → 销毁 yt-dlp 进程),`finally` 中 `dispose()` handle;保留 `YoutubeDL.CanceledException`/`YoutubeDLException` → `Canceled`/`Failure` 映射。
-- 边界不变:底层库仍完全封闭在本类内(ADR §3/§8)。
+### 4. `.../engine/EngineSmokeTest.kt`(文案)
+- 成功文案由"✓ 初始化成功"改为"✓ 初始化成功(yt-dlp + ffmpeg)",使真机自检能确认 ffmpeg 已就位。逻辑不变(init 现已含 ffmpeg)。
 
-### 5.(新)`.../engine/EngineSmokeTest.kt`
-- `object EngineSmokeTest { suspend fun run(engine: DownloadEngine, url: String): String }`
-- `engine.init()` → `engine.probe(url)`,拼标题/时长为可读字符串;捕获 `EngineInitException` 及其它异常 → 可读错误文本。纯逻辑,无 UI。
-
-### 6.(新)`.../ui/dev/EngineSmokeScreen.kt`
-- 最小 Compose 屏:URL 输入框(默认一个公开测试 URL)、"运行自检"按钮、结果 `Text`、返回按钮。
-- `rememberCoroutineScope().launch { result = EngineSmokeTest.run(YoutubeDlEngine(context.applicationContext), url) }`;运行时禁用按钮显示"运行中…"。复用 `TcpgytTheme`,保持精简,不引新依赖。
-
-### 7. `.../ui/more/MoreScreen.kt`
-- `SettingPage` 枚举增 `EngineSmoke`;设置列表增一行"引擎自检(开发)";`when` 增一分支渲染 `EngineSmokeScreen`,复用现有 `BackHandler`/返回模式。局部改动,不重排现有页面。
+> `ui/dev/EngineSmokeScreen.kt` 无需改动 —— 它经 `EngineSmokeTest.run` 间接触发。
 
 ## 关联影响
 
-- UI:仅 MoreScreen 新增一个开发入口 + 一个新子屏;其它页面不变。
-- 状态机/存储/网络:无新增持久化、无服务端、无账号、无远程日志;probe 仅发起 yt-dlp 元信息解析请求(读取用户提供的公开 URL,符合本地优先边界)。
-- Cookie:本切片不涉及;probe 默认不带 Cookie。
-- 依赖:仅 +1 运行时依赖(Apache-2.0)。
+- 体积:开 ABI splits 后产出 4 个按 ABI 分包的 APK,单包只含该 ABI 的 ffmpeg(~30–40MB 量级),而非全量 130MB+。若用户只需 arm64,可后续进一步收窄。
+- 依赖:+1 直接依赖(GPL-3.0)+ appcompat/commons-io 传递依赖。
+- 运行时:init 多一步解压 ffmpeg;probe 不受影响;**本切片无下载/后处理调用路径**。
+- 边界:无服务端/账号/云同步/远程日志;不涉及 Cookie。
 
 ## 回滚
 
-- 撤销 4 处编辑 + 删除 2 个新文件即回到 E-001;依赖行移除后无残留副作用。
+- 移除 `implementation(libs.ffmpeg)` + `ffmpeg` 库项 + `splits{}` + `YoutubeDlEngine.init` 里的 `FFmpeg.init` + 文案改回即可。
 
 ## 验收(用户真机)
 
-1. 工作区改完 → 用户在 Make 手动推送 → `git fetch origin` / `git reset --hard origin/main`。
-2. `cd android` → `.\gradlew.bat :app:assembleDebug` 构建成功(验证依赖 + suspend 改造编译通过)。
-3. 装机 → 「更多」→「引擎自检(开发)」→ 公开 URL 点「运行自检」:首次 init 解压后 probe 返回标题+时长(证明 yt-dlp 真跑通);失败显示可读错误,不崩溃。
-4.(可选)运行中按返回可取消,进程被销毁(结构化取消)。
+1. 工作区改完 → Make 手动推送 → `git fetch origin` / `git reset --hard origin/main`。
+2. `cd android` → `.\gradlew.bat :app:assembleDebug` 构建成功;产物为按 ABI 分包的多个 APK(体积明显小于全量合包)。
+3. 装机(选对应 ABI 的 APK)→「更多 → 引擎自检(开发)」运行:显示"✓ 初始化成功(yt-dlp + ffmpeg)"+ 标题/时长。
+
+## 同批一并推送(非 D-002 代码,属收尾)
+
+- `docs/03-dependency-decision.md`:标注 D-001 library「已入 build」、登记 D-002 ffmpeg(版本/来源/许可/传递依赖/体积/ABI 决策)。
+- `PROGRESS.md`:同步 E-002 完成、E-003/D-002 进行中、版本号维持 1.0 的决定。
 
 ## 不在本切片范围(后续另审)
 
-- D-002 ffmpeg 精确 Maven 版本 + FFmpeg 二进制许可与归属。
-- 真正下载落盘(存储权限/MediaStore/前台服务)、ViewModel、Room、DataStore 扩展、security-crypto。
-- 冒烟入口收敛到 debug-only variant(上线阶段处理)。
-- docs/03 标注 D-001「已入 build」、PROGRESS.md 同步(与本切片一并推送时补)。
+- **FFmpeg / 第三方 GPL 归属声明**:About 页「组件」区目前占位"后续显示第三方声明"——GPL-3.0 要求提供归属与源码获取途径,列为**必办的后续切片**(不阻塞本次构建,但发布前必须完成)。
+- 下载落盘 MVP(存储权限/MediaStore/前台服务)、ffmpeg 后处理的真实调用、ViewModel、Room、DataStore 扩展、security-crypto。
+- 进一步按需收窄 ABI(如仅 arm64-v8a)。
