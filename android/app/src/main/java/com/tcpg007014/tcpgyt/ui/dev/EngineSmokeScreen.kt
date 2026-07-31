@@ -22,9 +22,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tcpg007014.tcpgyt.engine.DownloadRequest
+import com.tcpg007014.tcpgyt.engine.DownloadResult
 import com.tcpg007014.tcpgyt.engine.EngineSmokeTest
 import com.tcpg007014.tcpgyt.engine.YoutubeDlEngine
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /**
  * 引擎自检屏(开发用,最小实现)。
@@ -39,6 +43,12 @@ fun EngineSmokeScreen() {
     var url by remember { mutableStateOf("https://www.youtube.com/watch?v=aqz-KE-bpKQ") }
     var running by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf("") }
+
+    // A-1:真实下载到应用专属目录(零权限),验证 download + 进度 + 取消链路。
+    var downloading by remember { mutableStateOf(false) }
+    var progress by remember { mutableStateOf("") }
+    var downloadResult by remember { mutableStateOf("") }
+    var downloadJob by remember { mutableStateOf<Job?>(null) }
 
     Column(
         modifier = Modifier
@@ -77,6 +87,64 @@ fun EngineSmokeScreen() {
         }
         if (result.isNotEmpty()) {
             Text(result, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        }
+
+        // ——— A-1:下载到应用专属目录 ———
+        Text(
+            "下载到应用专属目录(无需存储权限)。用于验证真实 download 链路与进度、取消。",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Button(
+            onClick = {
+                downloading = true
+                progress = ""
+                downloadResult = ""
+                val outputDir = context.getExternalFilesDir(null)!!.absolutePath
+                downloadJob = scope.launch {
+                    val engine = YoutubeDlEngine(context.applicationContext)
+                    try {
+                        engine.init()
+                        val request = DownloadRequest(
+                            taskId = UUID.randomUUID().toString(),
+                            url = url.trim(),
+                            outputDir = outputDir,
+                        )
+                        val outcome = engine.download(request) { percent, eta, _ ->
+                            progress = "进度:%.1f%%  剩余约 %d 秒".format(percent, eta)
+                        }
+                        downloadResult = when (outcome) {
+                            is DownloadResult.Success ->
+                                "✓ 下载完成(用时 ${outcome.elapsedMillis} ms)\n落地目录:$outputDir"
+                            DownloadResult.Canceled -> "已取消"
+                            is DownloadResult.Failure -> "✗ 下载失败:${outcome.message}"
+                        }
+                    } catch (e: Exception) {
+                        downloadResult = "✗ 下载出错:${e.message ?: e.javaClass.simpleName}"
+                    } finally {
+                        downloading = false
+                    }
+                }
+            },
+            enabled = !downloading && url.isNotBlank(),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(if (downloading) "下载中…" else "下载到应用目录")
+        }
+        if (downloading) {
+            Button(
+                onClick = { downloadJob?.cancel() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("取消下载")
+            }
+        }
+        if (progress.isNotEmpty()) {
+            Text(progress, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        }
+        if (downloadResult.isNotEmpty()) {
+            Text(downloadResult, fontSize = 14.sp, fontWeight = FontWeight.Medium)
         }
     }
 }
