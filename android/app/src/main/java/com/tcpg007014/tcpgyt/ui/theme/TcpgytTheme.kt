@@ -80,7 +80,7 @@ fun DrawScope.drawThemeBackground(theme: AppTheme) {
     )
 }
 
-// ── 画布辅助色映射（严格对照 src/index.css 每主题 token）──────────────
+// ── 画布辅助色映射（严格对照 src/index.css 每主题 token）──────
 // 画布区分三档极浅底色：wash（中）> pale ≈ soft（都很浅），并有专用的
 // section-label 分区标题灰。M3 colorScheme 无对应槽位，这里按主题集中提供，
 // 供详情页 / 筛选页复用，避免散落硬编码。
@@ -128,6 +128,18 @@ fun themePrimaryMuted(theme: AppTheme): Color = when (theme) {
     AppTheme.Mint     -> Color(0xFFEDF6F1)
     AppTheme.Lavender -> Color(0xFFF2EEF8)
     AppTheme.Night    -> Color(0xFF1C3C58)
+}
+
+/** = --tcp-ink（toast 药丸底色）：淡色系 4 套深墨，深色套翻浅。 */
+fun themeInk(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFFEEF7FF)
+    else           -> Color(0xFF151521)
+}
+
+/** toast 药丸文字色：深墨底上白字；深色套 ink 翻浅，文字翻深保证可读。 */
+fun themeInkText(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFF0C1B2B)
+    else           -> Color.White
 }
 
 /** 当前生效的主题，供无法直接拿到 AppTheme 的子 composable 读取辅助色。 */
