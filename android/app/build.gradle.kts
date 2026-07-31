@@ -13,7 +13,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86") }
+        // ABI 选择改由下方 splits.abi 统一接管;abiFilters 与 splits 不可并存(AGP 冲突)。
     }
     buildTypes { release { optimization { enable = false } } }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
