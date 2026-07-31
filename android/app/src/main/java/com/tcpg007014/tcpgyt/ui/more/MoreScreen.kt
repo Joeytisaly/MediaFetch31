@@ -9,12 +9,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Cookie
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.FolderOpen
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.theme.AppTheme
@@ -26,7 +34,7 @@ private enum class SettingPage {
 private data class SettingItem(
     val label: String,
     val detail: String,
-    val iconEmoji: String,
+    val icon: ImageVector,
     val iconBg: Color,
     val onClick: () -> Unit
 )
@@ -87,24 +95,24 @@ fun MoreScreen(
             SettingsGroup(
                 title = "下载",
                 items = listOf(
-                    SettingItem("下载偏好", "默认格式、画质与网络", "↓", primaryWash) { page = SettingPage.DownloadPrefs },
-                    SettingItem("保存位置", savePath, "📁", Color(0xFFFFE4CC)) { page = SettingPage.SaveLocation }
+                    SettingItem("下载偏好", "默认格式、画质与网络", Icons.Outlined.Download, primaryWash) { page = SettingPage.DownloadPrefs },
+                    SettingItem("保存位置", savePath, Icons.Outlined.FolderOpen, Color(0xFFFFE4CC)) { page = SettingPage.SaveLocation }
                 )
             )
             Spacer(Modifier.height(16.dp))
             SettingsGroup(
                 title = "隐私",
                 items = listOf(
-                    SettingItem("Cookie 管理", if (cookieEnabled) "已启用 · ${cookieItems.size} 个占位" else "未启用 · 本地导入", "🔒", Color(0xFFD4EEFF)) { page = SettingPage.Cookie },
-                    SettingItem("本地数据", "清理任务记录与缓存", "🗃️", Color(0xFFEBE4FF)) { page = SettingPage.LocalData }
+                    SettingItem("Cookie 管理", if (cookieEnabled) "已启用 · ${cookieItems.size} 个占位" else "未启用 · 本地导入", Icons.Outlined.Cookie, Color(0xFFD4EEFF)) { page = SettingPage.Cookie },
+                    SettingItem("本地数据", "清理任务记录与缓存", Icons.Outlined.Storage, Color(0xFFEBE4FF)) { page = SettingPage.LocalData }
                 )
             )
             Spacer(Modifier.height(16.dp))
             SettingsGroup(
                 title = "应用",
                 items = listOf(
-                    SettingItem("外观", current.label, "🎨", primaryWash) { page = SettingPage.Appearance },
-                    SettingItem("关于与支持", "TCPGYT · 原型版", "ℹ️", primaryWash) { page = SettingPage.About }
+                    SettingItem("外观", current.label, Icons.Outlined.AutoAwesome, primaryWash) { page = SettingPage.Appearance },
+                    SettingItem("关于与支持", "TCPGYT · 原型版", Icons.Outlined.Info, primaryWash) { page = SettingPage.About }
                 )
             )
             Spacer(Modifier.height(24.dp))
@@ -248,29 +256,35 @@ private fun SettingsGroup(title: String, items: List<SettingItem>) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
     )
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.65f)),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        items.forEachIndexed { index, item ->
+    items.forEach { item ->
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.65f)),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(onClick = item.onClick)
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Colored icon box
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(11.dp))
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
                         .background(item.iconBg),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(item.iconEmoji, style = MaterialTheme.typography.bodyLarge)
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.label,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
                 Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
@@ -279,7 +293,6 @@ private fun SettingsGroup(title: String, items: List<SettingItem>) {
                 }
                 Text("›", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
             }
-            if (index < items.size - 1) HorizontalDivider(color = Color.White.copy(alpha = 0.7f), thickness = 0.5.dp)
         }
     }
 }
@@ -666,7 +679,7 @@ private fun AboutPage() {
         SectionCard("应用信息") {
             listOf(
                 "开发者" to "TCPG007014 (YaR)",
-                "联系邮筱" to "ChengYuan.tcpg@gnail.com",
+                "联系邮筒" to "ChengYuan.tcpg@gnail.com",
                 "包名" to "com.tcpg007014.tcpgyt",
                 "隐私" to "数据仅保存在本机"
             ).forEachIndexed { i, (label, value) ->

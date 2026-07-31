@@ -10,11 +10,11 @@ enum class AppTheme(val label: String) { Blush("淡粉"), Blue("淡蓝"), Mint("
 
 fun themeGradient(theme: AppTheme): Brush = Brush.verticalGradient(
     colors = when (theme) {
-        AppTheme.Blush    -> listOf(Color(0xFFF5BBC6), Color(0xFFFAD4D7), Color(0xFFFFF9F8))
-        AppTheme.Blue     -> listOf(Color(0xFFB6D8EE), Color(0xFFD9EFFA), Color(0xFFF5FAFF))
-        AppTheme.Mint     -> listOf(Color(0xFFB9E2D1), Color(0xFFDCEFE5), Color(0xFFF4FCF8))
-        AppTheme.Lavender -> listOf(Color(0xFFD5C4EC), Color(0xFFECE4F8), Color(0xFFFAF8FF))
-        AppTheme.Night    -> listOf(Color(0xFF102A42), Color(0xFF0B2034), Color(0xFF081827))
+        AppTheme.Blush    -> listOf(Color(0xFFF5BBC6), Color(0xFFF7C9D2), Color(0xFFFAD4D7), Color(0xFFFDE8EC), Color(0xFFFFF9F8))
+        AppTheme.Blue     -> listOf(Color(0xFFB6D8EE), Color(0xFFC3E1F2), Color(0xFFD9EFFA), Color(0xFFEBF5FD), Color(0xFFF5FAFF))
+        AppTheme.Mint     -> listOf(Color(0xFFB9E2D1), Color(0xFFC8E9DA), Color(0xFFDCEFE5), Color(0xFFEBF7F0), Color(0xFFF4FCF8))
+        AppTheme.Lavender -> listOf(Color(0xFFD5C4EC), Color(0xFFDBCDF1), Color(0xFFECE4F8), Color(0xFFF3EFFC), Color(0xFFFAF8FF))
+        AppTheme.Night    -> listOf(Color(0xFF102A42), Color(0xFF0E2537), Color(0xFF0B2034), Color(0xFF091C2B), Color(0xFF081827))
     }
 )
 
