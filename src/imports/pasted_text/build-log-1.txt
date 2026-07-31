@@ -1,0 +1,94 @@
+Windows PowerShell
+版权所有 (C) Microsoft Corporation。保留所有权利。
+
+尝试新的跨平台 PowerShell https://aka.ms/pscore6
+
+PS C:\Users\TCPG> cd D:\test\MediaFetch31
+PS D:\test\MediaFetch31> git pull origin main
+remote: Enumerating objects: 38, done.
+remote: Counting objects: 100% (38/38), done.
+remote: Compressing objects: 100% (18/18), done.
+remote: Total 26 (delta 10), reused 0 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (26/26), 2.63 KiB | 10.00 KiB/s, done.
+From https://github.com/Joeytisaly/MediaFetch31
+ * branch            main       -> FETCH_HEAD
+   a9a0f45..43fc409  main       -> origin/main
+Updating a9a0f45..43fc409
+Fast-forward
+ .../java/com/tcpg007014/tcpgyt/ui/components/TcpgytIcons.kt | 13 +++++++++++++
+ .../main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt   |  9 ++++++---
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+ create mode 100644 android/app/src/main/java/com/tcpg007014/tcpgyt/ui/components/TcpgytIcons.kt
+PS D:\test\MediaFetch31> cd android
+PS D:\test\MediaFetch31\android> .\gradlew.bat :app:assembleDebug
+Calculating task graph as configuration cache cannot be reused because init script '..\..\..\..\C:\Users\TCPG\AppData\Local\Temp\ijMapper1.gradle' and 3 more have been removed.
+
+> Configure project :app
+WARNING: The option setting 'android.enableJetifier=true' is deprecated.
+The current default is 'false'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+
+> Task :app:compileDebugKotlin FAILED
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/components/TcpgytIcons.kt:12:101 Argument type mismatch: actual type is 'Float', but 'Dp' was expected.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/components/TcpgytIcons.kt:12:105 Argument type mismatch: actual type is 'Float', but 'Dp' was expected.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:158 No value passed for parameter 'content'.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:456 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:458 An explicit type is required on a value parameter.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:490 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:524 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:557 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:590 Syntax error: Expecting ')'.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:591 Syntax error: Expecting '}'.
+
+[Incubating] Problems report is available at: file:///D:/test/MediaFetch31/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 3s
+29 actionable tasks: 1 executed, 4 from cache, 24 up-to-date
+Configuration cache entry stored.
+PS D:\test\MediaFetch31\android> .\gradlew.bat :app:testDebugUnitTest
+Reusing configuration cache.
+
+> Task :app:compileDebugKotlin FAILED
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/components/TcpgytIcons.kt:12:101 Argument type mismatch: actual type is 'Float', but 'Dp' was expected.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/components/TcpgytIcons.kt:12:105 Argument type mismatch: actual type is 'Float', but 'Dp' was expected.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:158 No value passed for parameter 'content'.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:456 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:458 An explicit type is required on a value parameter.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:490 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:524 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:557 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:590 Syntax error: Expecting ')'.
+e: file:///D:/test/MediaFetch31/android/app/src/main/java/com/tcpg007014/tcpgyt/ui/shell/TcpgytApp.kt:16:591 Syntax error: Expecting '}'.
+
+[Incubating] Problems report is available at: file:///D:/test/MediaFetch31/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 2s
+18 actionable tasks: 1 executed, 17 up-to-date
+Configuration cache entry reused.
+PS D:\test\MediaFetch31\android>

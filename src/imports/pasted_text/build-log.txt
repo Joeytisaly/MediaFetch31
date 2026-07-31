@@ -1,0 +1,60 @@
+> Task :prepareKotlinBuildScriptModel UP-TO-DATE
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.2.21/kotlin-stdlib-2.2.21-sources.jar, took 463 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/2.2.21/kotlin-reflect-2.2.21-sources.jar, took 384 ms
+Download https://services.gradle.org/distributions/gradle-9.3.1-src.zip, took 4 s 118 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle-settings-api/9.1.0/gradle-settings-api-9.1.0-sources.jar, took 110 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle-common-api/9.1.0/gradle-common-api-9.1.0-sources.jar, took 98 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle-api/9.1.0/gradle-api-9.1.0-sources.jar, took 178 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/9.1.0/gradle-9.1.0-sources.jar, took 251 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/aaptcompiler/9.1.0/aaptcompiler-9.1.0-sources.jar, took 102 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/utp/gradle-work-action-api/32.1.0/gradle-work-action-api-32.1.0-sources.jar, took 107 ms
+Download https://dl.google.com/dl/android/maven2/androidx/databinding/databinding-compiler-common/9.1.0/databinding-compiler-common-9.1.0-sources.jar, took 97 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/builder/9.1.0/builder-9.1.0-sources.jar, took 130 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/lint/lint-model/32.1.0/lint-model-32.1.0-sources.jar, took 107 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/builder-model/9.1.0/builder-model-9.1.0-sources.jar, took 121 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/manifest-merger/32.1.0/manifest-merger-32.1.0-sources.jar, took 110 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/sdk-common/32.1.0/sdk-common-32.1.0-sources.jar, took 133 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/sdklib/32.1.0/sdklib-32.1.0-sources.jar, took 122 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/repository/32.1.0/repository-32.1.0-sources.jar, took 115 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/analytics-library/tracker/32.1.0/tracker-32.1.0-sources.jar, took 99 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/analytics-library/shared/32.1.0/shared-32.1.0-sources.jar, took 114 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/builder-test-api/9.1.0/builder-test-api-9.1.0-sources.jar, took 110 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/ddms/ddmlib/32.1.0/ddmlib-32.1.0-sources.jar, took 132 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/layoutlib/layoutlib-api/32.1.0/layoutlib-api-32.1.0-sources.jar, took 131 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/dvlib/32.1.0/dvlib-32.1.0-sources.jar, took 103 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/common/32.1.0/common-32.1.0-sources.jar, took 111 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/fus-statistics-gradle-plugin/2.4.10/fus-statistics-gradle-plugin-2.4.10-sources.jar, took 191 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin-api/2.4.10/kotlin-gradle-plugin-api-2.4.10-sources.jar, took 357 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/compose-compiler-gradle-plugin/2.4.10/compose-compiler-gradle-plugin-2.4.10-sources.jar, took 186 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/2.4.10/kotlin-gradle-plugin-2.4.10-sources.jar, took 1 s 31 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-compiler-runner/2.4.10/kotlin-compiler-runner-2.4.10-sources.jar, took 181 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/aapt2-proto/9.1.0-14792394/aapt2-proto-9.1.0-14792394-sources.jar, took 128 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/analytics-library/crash/32.1.0/crash-32.1.0-sources.jar, took 113 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/lint/lint-typedef-remover/32.1.0/lint-typedef-remover-32.1.0-sources.jar, took 99 ms
+Download https://dl.google.com/dl/android/maven2/androidx/databinding/databinding-common/9.1.0/databinding-common-9.1.0-sources.jar, took 105 ms
+Download https://dl.google.com/dl/android/maven2/com/android/databinding/baseLibrary/9.1.0/baseLibrary-9.1.0-sources.jar, took 122 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/analytics-library/protos/32.1.0/protos-32.1.0-sources.jar, took 177 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-build-statistics/2.4.10/kotlin-build-statistics-2.4.10-sources.jar, took 182 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/apkzlib/9.1.0/apkzlib-9.1.0-sources.jar, took 102 ms
+Download https://dl.google.com/dl/android/maven2/com/android/signflinger/9.1.0/signflinger-9.1.0-sources.jar, took 103 ms
+Download https://dl.google.com/dl/android/maven2/com/android/zipflinger/9.1.0/zipflinger-9.1.0-sources.jar, took 109 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/annotations/32.1.0/annotations-32.1.0-sources.jar, took 105 ms
+Download https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/9.1.0/apksig-9.1.0-sources.jar, took 104 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin-idea-proto/2.4.10/kotlin-gradle-plugin-idea-proto-2.4.10-sources.jar, took 190 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin-idea/2.4.10/kotlin-gradle-plugin-idea-2.4.10-sources.jar, took 200 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-klib-commonizer-api/2.4.10/kotlin-klib-commonizer-api-2.4.10-sources.jar, took 189 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-util-klib-metadata/2.4.10/kotlin-util-klib-metadata-2.4.10-sources.jar, took 186 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin-annotations/2.4.10/kotlin-gradle-plugin-annotations-2.4.10-sources.jar, took 179 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-native-utils/2.4.10/kotlin-native-utils-2.4.10-sources.jar, took 181 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-tooling-core/2.4.10/kotlin-tooling-core-2.4.10-sources.jar, took 181 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-build-tools-api/2.4.10/kotlin-build-tools-api-2.4.10-sources.jar, took 188 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-util-klib/2.4.10/kotlin-util-klib-2.4.10-sources.jar, took 250 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-util-io/2.4.10/kotlin-util-io-2.4.10-sources.jar, took 188 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-daemon-client/2.4.10/kotlin-daemon-client-2.4.10-sources.jar, took 184 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/compose-compiler-gradle-plugin/2.4.10/compose-compiler-gradle-plugin-2.4.10-gradle813-sources.jar, took 214 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/fus-statistics-gradle-plugin/2.4.10/fus-statistics-gradle-plugin-2.4.10-gradle813-sources.jar, took 557 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin-api/2.4.10/kotlin-gradle-plugin-api-2.4.10-gradle813-sources.jar, took 769 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/2.4.10/kotlin-gradle-plugin-2.4.10-gradle813-sources.jar, took 1 s 575 ms
+Download https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.4.10/kotlin-stdlib-2.4.10-sources.jar, took 1 s 317 ms
+
+BUILD SUCCESSFUL in 3m 23s

@@ -1,0 +1,467 @@
+--------- beginning of crash
+--------- beginning of system
+2026-07-31 07:09:08.056   500-7562  ActivityManager         pid-500                              E    0% 4209/com.android.managedprovisioning: 0% user + 0% kernel / faults: 14 minor 43 major
+                                                                                                      0% 5602/kworker/1:1H-kverityd: 0% user + 0% kernel
+                                                                                                      0% 5756/kworker/1:5H-kverityd: 0% user + 0% kernel
+                                                                                                      0% 6328/com.android.carrierdefaultapp: 0% user + 0% kernel / faults: 21 minor 1 major
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 6840/com.android.imsserviceentitlement: 0% user + 0% kernel / faults: 39 minor 2 major
+                                                                                                     +0% 7284/com.google.android.gms.persistent: 0% user + 0% kernel
+                                                                                                     +0% 7479/sh: 0% user + 0% kernel
+                                                                                                     +0% 7481/installer: 0% user + 0% kernel
+                                                                                                     +0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel
+                                                                                                    95% TOTAL: 8.6% user + 82% kernel + 0.5% iowait + 3.7% softirq
+                                                                                                    CPU usage from 627686ms to 627686ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:10:38.697   500-8821  ActivityManager         pid-500                              E    0% 206/kworker/u9:2-hci0: 0% user + 0% kernel
+                                                                                                      0% 293/dhcpclient: 0% user + 0% kernel
+                                                                                                      0% 314/android.hardware.bluetooth@1.1-service.btlinux: 0% user + 0% kernel
+                                                                                                      0% 342/android.hardware.wifi@1.0-service: 0% user + 0% kernel
+                                                                                                      0% 415/bt_vhci_forwarder: 0% user + 0% kernel
+                                                                                                      0% 416/cameraserver: 0% user + 0% kernel
+                                                                                                      0% 434/wificond: 0% user + 0% kernel
+                                                                                                      0% 2123/com.google.process.gapps: 0% user + 0% kernel / faults: 4 minor 6 major
+                                                                                                      0% 5290/kworker/u9:3-fscrypt_read_queue: 0% user + 0% kernel
+                                                                                                      0% 6055/com.google.android.apps.messaging: 0% user + 0% kernel
+                                                                                                      0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel / faults: 1 minor
+                                                                                                     +0% 8640/com.android.vending:instant_app_installer: 0% user + 0% kernel
+                                                                                                     +0% 8677/com.android.vending:background: 0% user + 0% kernel
+                                                                                                     +0% 8743/process-tracker: 0% user + 0% kernel
+                                                                                                     +0% 8768/com.google.android.bluetooth: 0% user + 0% kernel
+                                                                                                    91% TOTAL: 4.7% user + 83% kernel + 1% iowait + 2.9% softirq
+                                                                                                    CPU usage from 718314ms to 718314ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:12:09.237   500-9737  ActivityManager         pid-500                              E  ANR in com.google.android.gms.persistent
+                                                                                                    PID: 9418
+                                                                                                    Reason: executing service com.google.android.gms/.lockbox.service.LockboxBrokerService
+                                                                                                    ErrorId: 057a5b15-6805-4816-8281-3860ca2bab5a
+                                                                                                    Frozen: false
+                                                                                                    Load: 0.0 / 0.0 / 0.0
+                                                                                                    ----- Output from /proc/pressure/memory -----
+                                                                                                    some avg10=5.01 avg60=5.81 avg300=9.94 total=95864457
+                                                                                                    full avg10=2.29 avg60=2.31 avg300=3.02 total=27200395
+                                                                                                    ----- End output from /proc/pressure/memory -----
+                                                                                                    
+                                                                                                    CPU usage from 34387ms to 0ms ago (2026-07-30 23:11:33.515 to 2026-07-30 23:12:07.901):
+                                                                                                      122% 500/system_server: 3.5% user + 119% kernel / faults: 13887 minor 451 major
+                                                                                                      20% 816/com.google.android.permissioncontroller: 0.7% user + 19% kernel / faults: 3152 minor 61 major
+                                                                                                      16% 339/android.hardware.sensors@2.1-service.multihal: 0% user + 16% kernel
+                                                                                                      4.5% 7509/com.tcpg007014.tcpgyt: 0.9% user + 3.6% kernel / faults: 6477 minor 177 major
+                                                                                                      7.4% 6055/com.google.android.apps.messaging: 0.4% user + 7% kernel / faults: 2391 minor 270 major
+                                                                                                      6.8% 1811/adbd: 0.2% user + 6.6% kernel / faults: 23298 minor
+                                                                                                      6.3% 331/android.hardware.graphics.composer@2.4-service: 0% user + 6.2% kernel / faults: 1 major
+                                                                                                      6% 203/jbd2/dm-34-8: 0% user + 6% kernel
+                                                                                                      5.6% 352/surfaceflinger: 0% user + 5.5% kernel / faults: 11 minor 6 major
+                                                                                                      4.7% 1/init: 0% user + 4.7% kernel
+                                                                                                      3.9% 305/statsd: 0% user + 3.9% kernel / faults: 74 minor 3 major
+                                                                                                      3.6% 5950/com.android.phone: 0.2% user + 3.3% kernel / faults: 971 minor 58 major
+                                                                                                      3.4% 6071/com.google.android.gms: 0.3% user + 3% kernel / faults: 849 minor 21 major
+                                                                                                      2.7% 3721/com.google.android.googlequicksearchbox:search: 0.2% user + 2.5% kernel / faults: 102 minor 27 major
+                                                                                                      2.6% 7909/com.google.android.apps.youtube.music: 0.1% user + 2.5% kernel / faults: 285 minor
+                                                                                                      2.6% 801/com.android.systemui: 0.2% user + 2.4% kernel / faults: 258 minor 16 major
+                                                                                                      0.8% 8627/kworker/2:3-virtio_vsock: 0% user + 0.8% kernel
+                                                                                                      2.2% 197/kworker/u8:3-loop28: 0% user + 2.2% kernel
+                                                                                                      2.1% 1063/com.google.android.apps.nexuslauncher: 0.3% user + 1.8% kernel / faults: 1870 minor 40 major
+                                                                                                      2% 54/kswapd0: 0% user + 2% kernel
+                                                                                                      2% 14/rcu_preempt: 0% user + 2% kernel
+                                                                                                      0.6% 6615/com.google.android.dialer: 0% user + 0.5% kernel / faults: 749 minor 182 major
+                                                                                                      1.6% 1930/kworker/u8:4-phy1: 0% user + 1.6% kernel
+                                                                                                      1.5% 5172/com.google.android.ims: 0% user + 1.4% kernel / faults: 194 minor 39 major
+                                                                                                      1.3% 20/kworker/0:1-mm_percpu_wq: 0% user + 1.3% kernel
+                                                                                                      0.5% 3702/com.google.android.apps.wellbeing: 0% user + 0.4% kernel / faults: 15 minor 19 major
+                                                                                                      1.3% 10/kworker/u8:1-ext4-rsv-conversion: 0% user + 1.3% kernel
+                                                                                                      1.3% 312/android.hardware.audio.service: 0% user + 1.3% kernel
+                                                                                                      1.1% 415/bt_vhci_forwarder: 0% user + 1.1% kernel
+                                                                                                      1% 141/logd: 0% user + 1% kernel / faults: 154 minor
+                                                                                                      1% 4766/android.process.acore: 0% user + 0.9% kernel / faults: 109 minor 15 major
+                                                                                                      0.9% 6609/com.google.android.gms.unstable: 0% user + 0.9% kernel / faults: 12 minor 3 major
+                                                                                                      0.8% 70/kworker/3:1-rcu_gp: 0% user + 0.8% kernel
+                                                                                                      0.8% 1713/com.google.android.youtube: 0% user + 0.7% kernel / faults: 86 minor 72 major
+                                                                                                      0.7% 25/ksoftirqd/1: 0% user + 0.7% kernel
+                                                                                                      0.6% 6279/kworker/3:3H-kverityd: 0% user + 0.6% kernel
+                                                                                                      0.6% 1965/com.google.process.gservices: 0% user + 0.6% kernel / faults: 69 minor
+                                                                                                      0.6% 13/ksoftirqd/0: 0% user + 0.6% kernel
+                                                                                                      0.6% 7103/libgoldfish-rild: 0% user + 0.5% kernel / faults: 5 major
+                                                                                                      0.5% 5717/kworker/0:6H-kverityd: 0% user + 0.5% kernel
+                                                                                                      0.5% 306/netd: 0% user + 0.5% kernel / faults: 59 minor
+                                                                                                      0.5% 5797/kworker/2:0H-kverityd: 0% user + 0.5% kernel
+                                                                                                      0.4% 198/kworker/u9:1-blk_crypto_wq: 0% user + 0.4% kernel
+                                                                                                      0.3% 5682/kworker/1:4H-kblockd: 0% user + 0.3% kernel
+                                                                                                      0.3% 6159/com.google.android.as: 0% user + 0.3% kernel / faults: 49 minor 3 major
+                                                                                                      0.3% 8864/com.android.vending: 0% user + 0.2% kernel / faults: 1319 minor
+                                                                                                      0.3% 37/ksoftirqd/3: 0% user + 0.3% kernel
+                                                                                                      0.1% 206/kworker/u9:2-hci0: 0% user + 0.1% kernel
+                                                                                                      0.3% 314/android.hardware.bluetooth@1.1-service.btlinux: 0% user + 0.3% kernel / faults: 3 minor
+---------------------------- PROCESS STARTED (15172) for package com.tcpg007014.tcpgyt ----------------------------
+2026-07-31 07:13:44.249   500-10663 ActivityManager         system_server                        E  ANR in com.google.android.bluetooth
+                                                                                                    PID: 10264
+                                                                                                    Reason: executing service com.google.android.bluetooth/com.android.bluetooth.btservice.AdapterService
+                                                                                                    ErrorId: b7df9bcd-30b1-4618-931d-daaafe813e15
+                                                                                                    Frozen: false
+                                                                                                    Load: 0.0 / 0.0 / 0.0
+                                                                                                    ----- Output from /proc/pressure/memory -----
+                                                                                                    some avg10=10.90 avg60=5.95 avg300=8.60 total=100685161
+                                                                                                    full avg10=3.41 avg60=1.88 avg300=2.60 total=28899049
+                                                                                                    ----- End output from /proc/pressure/memory -----
+                                                                                                    
+                                                                                                    CPU usage from 93961ms to 0ms ago (2026-07-30 23:12:07.901 to 2026-07-30 23:13:41.889):
+                                                                                                      116% 500/system_server: 2.2% user + 113% kernel / faults: 32793 minor 511 major
+                                                                                                      17% 816/com.google.android.permissioncontroller: 0.4% user + 16% kernel / faults: 6158 minor 20 major
+                                                                                                      15% 339/android.hardware.sensors@2.1-service.multihal: 0% user + 15% kernel
+                                                                                                      7.5% 203/jbd2/dm-34-8: 0% user + 7.5% kernel
+                                                                                                      7.3% 1811/adbd: 0.2% user + 7% kernel / faults: 50380 minor 4 major
+                                                                                                      6.5% 331/android.hardware.graphics.composer@2.4-service: 0% user + 6.5% kernel / faults: 1 minor
+                                                                                                      6% 1/init: 0% user + 5.9% kernel / faults: 148 minor 46 major
+                                                                                                      5.4% 352/surfaceflinger: 0% user + 5.3% kernel / faults: 19 minor 164 major
+                                                                                                      4.1% 801/com.android.systemui: 0.2% user + 3.8% kernel / faults: 4047 minor 2005 major
+                                                                                                      3.9% 305/statsd: 0% user + 3.8% kernel / faults: 168 minor 1 major
+                                                                                                      3.8% 6055/com.google.android.apps.messaging: 0.2% user + 3.6% kernel / faults: 3306 minor 176 major
+                                                                                                      3.7% 5950/com.android.phone: 0.1% user + 3.5% kernel / faults: 2472 minor 178 major
+                                                                                                      3.6% 3721/com.google.android.googlequicksearchbox:search: 0.2% user + 3.4% kernel / faults: 7311 minor 615 major
+                                                                                                      3% 1063/com.google.android.apps.nexuslauncher: 0.5% user + 2.5% kernel / faults: 8878 minor 107 major
+                                                                                                      2.8% 7509/com.tcpg007014.tcpgyt: 0.5% user + 2.3% kernel / faults: 4270 minor 61 major
+                                                                                                      2.8% 8627/kworker/2:3-virtio_vsock: 0% user + 2.8% kernel
+                                                                                                      2.5% 6071/com.google.android.gms: 0.2% user + 2.2% kernel / faults: 4070 minor 91 major
+                                                                                                      2% 14/rcu_preempt: 0% user + 2% kernel
+                                                                                                      1.9% 6615/com.google.android.dialer: 0.1% user + 1.8% kernel / faults: 2541 minor 149 major
+                                                                                                      1.9% 54/kswapd0: 0% user + 1.9% kernel
+                                                                                                      1.7% 312/android.hardware.audio.service: 0% user + 1.7% kernel
+                                                                                                      1.5% 5172/com.google.android.ims: 0% user + 1.4% kernel / faults: 1044 minor 235 major
+                                                                                                      0.5% 5649/kworker/u8:0-writeback: 0% user + 0.5% kernel
+                                                                                                      1.4% 141/logd: 0% user + 1.4% kernel / faults: 843 minor 25 major
+                                                                                                      1.3% 5682/kworker/1:4H-kblockd: 0% user + 1.3% kernel
+                                                                                                      0.9% 45/kcompactd0: 0% user + 0.9% kernel
+                                                                                                      0.5% 5776/kworker/3:0H-kblockd: 0% user + 0.5% kernel
+                                                                                                      1.1% 7909/com.google.android.apps.youtube.music: 0% user + 1.1% kernel / faults: 185 minor 34 major
+                                                                                                      1.1% 10/kworker/u8:1-ext4-rsv-conversion: 0% user + 1.1% kernel
+                                                                                                      1% 20/kworker/0:1-mm_percpu_wq: 0% user + 1% kernel
+                                                                                                      0.9% 6159/com.google.android.as: 0% user + 0.8% kernel / faults: 618 minor 82 major
+                                                                                                      0.7% 4766/android.process.acore: 0% user + 0.7% kernel / faults: 899 minor 60 major
+                                                                                                      0.7% 8110/com.google.android.calendar: 0% user + 0.7% kernel / faults: 331 minor 106 major
+                                                                                                      0.7% 13/ksoftirqd/0: 0% user + 0.7% kernel
+                                                                                                      0.7% 9647/com.google.android.settings.intelligence: 0% user + 0.6% kernel / faults: 1659 minor 1 major
+                                                                                                      0.2% 4979/kworker/1:1: 0% user + 0.2% kernel
+                                                                                                      0.6% 6609/com.google.android.gms.unstable: 0% user + 0.6% kernel / faults: 619 minor 6 major
+                                                                                                      0.6% 70/kworker/3:1-rcu_gp: 0% user + 0.6% kernel
+                                                                                                      0.6% 197/kworker/u8:3-loop28: 0% user + 0.6% kernel
+                                                                                                      0.6% 966/com.android.networkstack.process: 0% user + 0.5% kernel / faults: 517 minor 116 major
+                                                                                                      0.6% 2123/com.google.process.gapps: 0% user + 0.5% kernel / faults: 521 minor 390 major
+                                                                                                      0.6% 25/ksoftirqd/1: 0% user + 0.6% kernel
+                                                                                                      0.5% 206/kworker/u9:2-hci0: 0% user + 0.5% kernel
+                                                                                                      0.5% 306/netd: 0% user + 0.4% kernel / faults: 302 minor 2 major
+                                                                                                      0% 3168/kworker/0:5H: 0% user + 0% kernel
+                                                                                                      0.5% 5717/kworker/0:6H-kverityd: 0% user + 0.5% kernel
+                                                                                                      0.3% 1601/com.google.android.providers.media.module: 0% user + 0.3% kernel / faults: 932 minor 1157 major
+---------------------------- PROCESS ENDED (15172) for package com.tcpg007014.tcpgyt ----------------------------
+2026-07-31 07:15:21.270   500-11372 ActivityManager         system_server                        E    0.2% 2618/com.google.android.googlequicksearchbox:interactor: 0% user + 0.2% kernel / faults: 35 minor 52 major
+                                                                                                      0.2% 143/servicemanager: 0% user + 0.2% kernel / faults: 6 minor 5 major
+                                                                                                      0.2% 349/audioserver: 0% user + 0.2% kernel / faults: 30 minor 10 major
+                                                                                                      0.2% 307/zygote64: 0% user + 0.2% kernel / faults: 720 minor 1 major
+                                                                                                      0.2% 8627/kworker/2:3-virtio_vsock: 0% user + 0.2% kernel
+                                                                                                      0.1% 434/wificond: 0% user + 0.1% kernel / faults: 1 minor 1 major
+                                                                                                      0.1% 4979/kworker/1:1: 0% user + 0.1% kernel
+                                                                                                      0.1% 794/wpa_supplicant: 0% user + 0.1% kernel / faults: 2 minor 4 major
+                                                                                                      0.1% 3794/com.google.android.inputmethod.latin: 0% user + 0.1% kernel / faults: 42 minor 62 major
+                                                                                                      0.1% 198/kworker/u9:1-blk_crypto_wq: 0% user + 0.1% kernel
+                                                                                                      0.1% 955/android.hardware.gnss@2.0-service.ranchu: 0% user + 0.1% kernel
+                                                                                                      0.1% 9166/android.process.media: 0% user + 0.1% kernel / faults: 57 minor 17 major
+                                                                                                      0.1% 10557/kworker/u9:0-fscrypt_read_queue: 0% user + 0.1% kernel
+                                                                                                      0.1% 1601/com.google.android.providers.media.module: 0% user + 0.1% kernel / faults: 39 minor 5 major
+                                                                                                      0.1% 342/android.hardware.wifi@1.0-service: 0% user + 0.1% kernel
+                                                                                                      0% 320/android.hardware.drm-service.widevine: 0% user + 0% kernel / faults: 230 minor 159 major
+                                                                                                      0.1% 7103/libgoldfish-rild: 0% user + 0.1% kernel / faults: 14 minor 35 major
+                                                                                                      0.1% 170/keystore2: 0% user + 0.1% kernel / faults: 13 minor 8 major
+                                                                                                      0% 169/android.system.suspend@1.0-service: 0% user + 0% kernel
+                                                                                                      0% 429/media.metrics: 0% user + 0% kernel / faults: 24 minor 60 major
+                                                                                                      0% 17/rcu_exp_gp_kthr: 0% user + 0% kernel
+                                                                                                      0% 293/dhcpclient: 0% user + 0% kernel
+                                                                                                      0% 1713/com.google.android.youtube: 0% user + 0% kernel / faults: 6 minor 8 major
+                                                                                                      0% 1965/com.google.process.gservices: 0% user + 0% kernel / faults: 11 minor
+                                                                                                      0% 45/kcompactd0: 0% user + 0% kernel
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel / faults: 2 minor 16 major
+                                                                                                      0% 322/android.hardware.drm@1.4-service.clearkey: 0% user + 0% kernel / faults: 5 minor 48 major
+                                                                                                      0% 450/android.hardware.biometrics.fingerprint@2.1-service: 0% user + 0% kernel
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 29/migration/2: 0% user + 0% kernel
+                                                                                                      0% 35/migration/3: 0% user + 0% kernel
+                                                                                                      0% 319/android.hardware.drm-service.clearkey: 0% user + 0% kernel / faults: 6 minor 24 major
+                                                                                                      0% 321/android.hardware.drm@1.0-service: 0% user + 0% kernel / faults: 6 minor 36 major
+                                                                                                      0% 433/storaged: 0% user + 0% kernel / faults: 1 major
+                                                                                                      0% 4730/com.google.android.as.oss: 0% user + 0% kernel / faults: 1 major
+                                                                                                      0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel / faults: 10 minor 10 major
+                                                                                                      0% 15/rcub/0: 0% user + 0% kernel
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 23/migration/1: 0% user + 0% kernel
+                                                                                                      0% 161/vold: 0% user + 0% kernel
+                                                                                                      0% 210/tombstoned: 0% user + 0% kernel
+                                                                                                      0% 338/android.hardware.power.stats@1.0-service.mock: 0% user + 0% kernel / faults: 7 minor 47 major
+                                                                                                      0% 407/traced: 0% user + 0% kernel
+                                                                                                     +0% 10686/com.android.imsserviceentitlement: 0% user + 0% kernel
+                                                                                                     +0% 10727/com.android.dynsystem: 0% user + 0% kernel
+                                                                                                     +0% 10760/com.android.dynsystem:dynsystem: 0% user + 0% kernel
+                                                                                                     +0% 10776/com.android.managedprovisioning: 0% user + 0% kernel
+                                                                                                     +0% 10829/com.google.android.cellbroadcastreceiver: 0% user + 0% kernel
+                                                                                                     +0% 10880/com.android.providers.calendar: 0% user + 0% kernel
+                                                                                                     +0% 10923/com.android.remoteprovisioner: 0% user + 0% kernel
+                                                                                                     +0% 10952/com.android.settings: 0% user + 0% kernel
+                                                                                                     +0% 10973/com.android.shell: 0% user + 0% kernel
+                                                                                                     +0% 11009/com.google.android.apps.docs: 0% user + 0% kernel
+                                                                                                     +0% 11104/com.google.android.apps.maps: 0% user + 0% kernel
+                                                                                                     +0% 11133/kworker/1:0-sock_diag_events: 0% user + 0% kernel
+                                                                                                     +0% 11155/com.google.android.bluetooth: 0% user + 0% kernel
+                                                                                                     +0% 11354/process-tracker: 0% user + 0% kernel
+                                                                                                    91% TOTAL: 1.8% user + 85% kernel + 0.8% iowait + 2.9% softirq
+                                                                                                    CPU usage from 1000182ms to 1000182ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:17:23.070   500-12029 ActivityManager         system_server                        E    0.1% 434/wificond: 0% user + 0.1% kernel
+                                                                                                      0.1% 1713/com.google.android.youtube: 0% user + 0.1% kernel
+                                                                                                      0.1% 3168/kworker/0:5H: 0% user + 0.1% kernel
+                                                                                                      0.1% 5682/kworker/1:4H-kblockd: 0% user + 0.1% kernel
+                                                                                                      0.1% 5776/kworker/3:0H-kblockd: 0% user + 0.1% kernel
+                                                                                                      0.1% 7509/com.tcpg007014.tcpgyt: 0% user + 0.1% kernel / faults: 97 minor
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 143/servicemanager: 0% user + 0% kernel
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel
+                                                                                                      0% 210/tombstoned: 0% user + 0% kernel
+                                                                                                      0% 416/cameraserver: 0% user + 0% kernel
+                                                                                                      0% 794/wpa_supplicant: 0% user + 0% kernel
+                                                                                                     +0% 12075/process-tracker: 0% user + 0% kernel
+                                                                                                     +0% 12081/kworker/u8:5-events_unbound: 0% user + 0% kernel
+                                                                                                     +0% 12082/dumpsys: 0% user + 0% kernel
+                                                                                                    96% TOTAL: 2.2% user + 90% kernel + 0.1% iowait + 3.5% softirq
+                                                                                                    CPU usage from 1107643ms to 1107643ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:20:10.562   500-12996 ActivityManager         system_server                        E    0.2% 314/android.hardware.bluetooth@1.1-service.btlinux: 0% user + 0.2% kernel / faults: 10 minor 1 major
+                                                                                                      0.3% 416/cameraserver: 0% user + 0.3% kernel / faults: 4 major
+                                                                                                      0.2% 169/android.system.suspend@1.0-service: 0% user + 0.2% kernel / faults: 6 minor 42 major
+                                                                                                      0.2% 415/bt_vhci_forwarder: 0% user + 0.2% kernel
+                                                                                                      0.2% 12081/kworker/u8:5-events_unbound: 0% user + 0.2% kernel
+                                                                                                      0.2% 955/android.hardware.gnss@2.0-service.ranchu: 0% user + 0.2% kernel
+                                                                                                      0.2% 10557/kworker/u9:0-fscrypt_read_queue: 0% user + 0.2% kernel
+                                                                                                      0.1% 349/audioserver: 0% user + 0.1% kernel / faults: 42 minor
+                                                                                                      0.2% 11389/com.google.android.apps.maps: 0% user + 0.1% kernel / faults: 70 minor
+                                                                                                      0.1% 293/dhcpclient: 0% user + 0.1% kernel
+                                                                                                      0.1% 143/servicemanager: 0% user + 0.1% kernel
+                                                                                                      0.1% 142/lmkd: 0% user + 0.1% kernel
+                                                                                                      0.1% 206/kworker/u9:2-hci0: 0% user + 0.1% kernel
+                                                                                                      0% 10923/com.android.remoteprovisioner: 0% user + 0% kernel / faults: 193 minor 1 major
+                                                                                                      0.1% 17/rcu_exp_gp_kthr: 0% user + 0.1% kernel
+                                                                                                      0.1% 11527/com.google.process.gapps: 0% user + 0.1% kernel / faults: 16 minor
+                                                                                                      0.1% 434/wificond: 0% user + 0.1% kernel / faults: 1 minor
+                                                                                                      0.1% 794/wpa_supplicant: 0% user + 0.1% kernel
+                                                                                                      0.1% 342/android.hardware.wifi@1.0-service: 0% user + 0.1% kernel
+                                                                                                      0% 172/android.hardware.security.keymint-service: 0% user + 0% kernel / faults: 19 minor 29 major
+                                                                                                      0% 307/zygote64: 0% user + 0% kernel / faults: 384 minor
+                                                                                                      0% 2618/com.google.android.googlequicksearchbox:interactor: 0% user + 0% kernel / faults: 7 minor
+                                                                                                      0% 334/android.hardware.health@2.1-service: 0% user + 0% kernel / faults: 4 minor 10 major
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 7103/libgoldfish-rild: 0% user + 0% kernel / faults: 1 minor 2 major
+                                                                                                      0% 450/android.hardware.biometrics.fingerprint@2.1-service: 0% user + 0% kernel
+                                                                                                      0% 15/rcub/0: 0% user + 0% kernel
+                                                                                                      0% 29/migration/2: 0% user + 0% kernel
+                                                                                                      0% 35/migration/3: 0% user + 0% kernel
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 23/migration/1: 0% user + 0% kernel
+                                                                                                      0% 326/android.hardware.graphics.allocator@3.0-service: 0% user + 0% kernel / faults: 2 major
+                                                                                                      0% 10880/com.android.providers.calendar: 0% user + 0% kernel / faults: 9 minor
+                                                                                                      0% 154/qemu-props: 0% user + 0% kernel
+                                                                                                      0% 433/storaged: 0% user + 0% kernel / faults: 2 minor 11 major
+                                                                                                      0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel / faults: 3 minor
+                                                                                                      0% 323/iptables-restore: 0% user + 0% kernel
+                                                                                                      0% 325/ip6tables-restore: 0% user + 0% kernel
+                                                                                                      0% 338/android.hardware.power.stats@1.0-service.mock: 0% user + 0% kernel / faults: 3 major
+                                                                                                      0% 345/android.hardware.power-service.example: 0% user + 0% kernel
+                                                                                                      0% 406/traced_probes: 0% user + 0% kernel
+                                                                                                      0% 407/traced: 0% user + 0% kernel
+                                                                                                      0% 429/media.metrics: 0% user + 0% kernel
+                                                                                                      0% 1713/com.google.android.youtube: 0% user + 0% kernel / faults: 2 minor
+                                                                                                     +0% 12205/com.google.android.apps.wallpaper: 0% user + 0% kernel
+                                                                                                     +0% 12366/com.google.android.apps.wellbeing: 0% user + 0% kernel
+                                                                                                     +0% 12611/com.google.android.bluetooth: 0% user + 0% kernel
+                                                                                                     +0% 12699/com.google.android.gms.persistent: 0% user + 0% kernel
+                                                                                                     +0% 12725/com.google.android.apps.messaging: 0% user + 0% kernel
+                                                                                                     +0% 12765/kworker/u9:1-fscrypt_read_queue: 0% user + 0% kernel
+                                                                                                     +0% 12859/com.google.android.calendar: 0% user + 0% kernel
+                                                                                                    95% TOTAL: 1.4% user + 90% kernel + 0.4% iowait + 3.1% softirq
+                                                                                                    CPU usage from 1286622ms to 1286622ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+--------- beginning of main
+2026-07-31 07:21:49.306   500-13841 ActivityManager         system_server                        E    0.3% 349/audioserver: 0% user + 0.3% kernel / faults: 44 minor 2 major
+                                                                                                      0.3% 143/servicemanager: 0% user + 0.3% kernel
+                                                                                                      0.3% 8864/com.android.vending: 0% user + 0.3% kernel / faults: 148 minor 2 major
+                                                                                                      0.2% 142/lmkd: 0% user + 0.2% kernel
+                                                                                                      0.2% 6159/com.google.android.as: 0% user + 0.2% kernel / faults: 27 minor 26 major
+                                                                                                      0.2% 9823/kworker/u8:2-writeback: 0% user + 0.2% kernel
+                                                                                                      0.2% 206/kworker/u9:2-hci0: 0% user + 0.2% kernel
+                                                                                                      0.1% 170/keystore2: 0% user + 0.1% kernel / faults: 16 minor
+                                                                                                      0.1% 342/android.hardware.wifi@1.0-service: 0% user + 0.1% kernel
+                                                                                                      0.1% 3721/com.google.android.googlequicksearchbox:search: 0% user + 0.1% kernel / faults: 16 minor 16 major
+                                                                                                      0.1% 307/zygote64: 0% user + 0.1% kernel / faults: 336 minor
+                                                                                                      0.1% 434/wificond: 0% user + 0.1% kernel / faults: 1 minor
+                                                                                                      0.1% 10923/com.android.remoteprovisioner: 0% user + 0.1% kernel / faults: 10 minor
+                                                                                                      0.1% 169/android.system.suspend@1.0-service: 0% user + 0.1% kernel
+                                                                                                      0.1% 293/dhcpclient: 0% user + 0.1% kernel
+                                                                                                      0.1% 955/android.hardware.gnss@2.0-service.ranchu: 0% user + 0.1% kernel
+                                                                                                      0.1% 794/wpa_supplicant: 0% user + 0.1% kernel / faults: 1 major
+                                                                                                      0% 17/rcu_exp_gp_kthr: 0% user + 0% kernel
+                                                                                                      0% 1713/com.google.android.youtube: 0% user + 0% kernel / faults: 14 minor 12 major
+                                                                                                      0% 11527/com.google.process.gapps: 0% user + 0% kernel / faults: 7 minor
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel
+                                                                                                      0% 7103/libgoldfish-rild: 0% user + 0% kernel / faults: 6 major
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 29/migration/2: 0% user + 0% kernel
+                                                                                                      0% 35/migration/3: 0% user + 0% kernel
+                                                                                                      0% 450/android.hardware.biometrics.fingerprint@2.1-service: 0% user + 0% kernel
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 15/rcub/0: 0% user + 0% kernel
+                                                                                                      0% 172/android.hardware.security.keymint-service: 0% user + 0% kernel
+                                                                                                      0% 323/iptables-restore: 0% user + 0% kernel
+                                                                                                      0% 325/ip6tables-restore: 0% user + 0% kernel
+                                                                                                      0% 406/traced_probes: 0% user + 0% kernel
+                                                                                                      0% 407/traced: 0% user + 0% kernel
+                                                                                                      0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel / faults: 2 minor
+                                                                                                      0% 12205/com.google.android.apps.wallpaper: 0% user + 0% kernel
+                                                                                                     +0% 13135/com.google.android.cellbroadcastreceiver: 0% user + 0% kernel
+                                                                                                     +0% 13172/com.google.android.configupdater: 0% user + 0% kernel
+                                                                                                     +0% 13281/com.google.android.contacts: 0% user + 0% kernel
+                                                                                                     +0% 13285/kworker/2:1-virtio_vsock: 0% user + 0% kernel
+                                                                                                     +0% 13415/com.google.android.deskclock: 0% user + 0% kernel
+                                                                                                     +0% 13506/android.process.acore: 0% user + 0% kernel
+                                                                                                     +0% 13554/com.google.android.gm: 0% user + 0% kernel
+                                                                                                     +0% 13661/com.google.android.bluetooth: 0% user + 0% kernel
+                                                                                                    96% TOTAL: 1.5% user + 91% kernel + 0.4% iowait + 3% softirq
+                                                                                                    CPU usage from 1385451ms to 1385451ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:22:45.354   500-14256 ActivityManager         system_server                        E    0.1% 955/android.hardware.gnss@2.0-service.ranchu: 0% user + 0.1% kernel
+                                                                                                      0.1% 5776/kworker/3:0H-kblockd: 0% user + 0.1% kernel
+                                                                                                      0.1% 11527/com.google.process.gapps: 0% user + 0.1% kernel / faults: 3 minor
+                                                                                                      0% 794/wpa_supplicant: 0% user + 0% kernel
+                                                                                                      0% 10923/com.android.remoteprovisioner: 0% user + 0% kernel / faults: 4 minor
+                                                                                                      0% 13281/com.google.android.contacts: 0% user + 0% kernel / faults: 6 minor
+                                                                                                      0% 1930/kworker/u8:4-phy1: 0% user + 0% kernel
+                                                                                                      0% 11869/com.google.android.apps.photos: 0% user + 0% kernel / faults: 2 minor
+                                                                                                      0% 17/rcu_exp_gp_kthr: 0% user + 0% kernel
+                                                                                                      0% 169/android.system.suspend@1.0-service: 0% user + 0% kernel
+                                                                                                      0% 293/dhcpclient: 0% user + 0% kernel
+                                                                                                      0% 2/kthreadd: 0% user + 0% kernel
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel
+                                                                                                      0% 170/keystore2: 0% user + 0% kernel / faults: 8 minor
+                                                                                                      0% 10557/kworker/u9:0-fscrypt_read_queue: 0% user + 0% kernel
+                                                                                                      0% 12765/kworker/u9:1-fscrypt_read_queue: 0% user + 0% kernel
+                                                                                                      0% 15/rcub/0: 0% user + 0% kernel
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 23/migration/1: 0% user + 0% kernel
+                                                                                                      0% 29/migration/2: 0% user + 0% kernel
+                                                                                                      0% 161/vold: 0% user + 0% kernel
+                                                                                                      0% 210/tombstoned: 0% user + 0% kernel
+                                                                                                      0% 338/android.hardware.power.stats@1.0-service.mock: 0% user + 0% kernel
+                                                                                                      0% 450/android.hardware.biometrics.fingerprint@2.1-service: 0% user + 0% kernel
+                                                                                                      0% 661/kworker/1:2-events: 0% user + 0% kernel
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 7103/libgoldfish-rild: 0% user + 0% kernel
+                                                                                                      0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel / faults: 1 minor
+                                                                                                     +0% 13898/com.google.android.gms.persistent: 0% user + 0% kernel
+                                                                                                     +0% 14001/kworker/1:1: 0% user + 0% kernel
+                                                                                                     +0% 14003/com.google.android.gm: 0% user + 0% kernel
+                                                                                                     +0% 14189/process-tracker: 0% user + 0% kernel
+                                                                                                     +0% 14197/kworker/u8:1-ext4-rsv-conversion: 0% user + 0% kernel
+                                                                                                     +0% 14198/com.google.android.bluetooth: 0% user + 0% kernel
+                                                                                                    96% TOTAL: 1.4% user + 92% kernel + 0.1% iowait + 1.8% softirq
+                                                                                                    CPU usage from 1444494ms to 1444494ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:23:32.154   500-14522 ActivityManager         system_server                        E    0.1% 13506/android.process.acore: 0% user + 0.1% kernel / faults: 30 minor
+                                                                                                      0.1% 416/cameraserver: 0% user + 0.1% kernel
+                                                                                                      0.1% 434/wificond: 0% user + 0.1% kernel
+                                                                                                      0.1% 794/wpa_supplicant: 0% user + 0.1% kernel
+                                                                                                      0.1% 955/android.hardware.gnss@2.0-service.ranchu: 0% user + 0.1% kernel
+                                                                                                      0.1% 142/lmkd: 0% user + 0.1% kernel
+                                                                                                      0.1% 169/android.system.suspend@1.0-service: 0% user + 0.1% kernel / faults: 1 minor 2 major
+                                                                                                      0.1% 293/dhcpclient: 0% user + 0.1% kernel
+                                                                                                      0.1% 17/rcu_exp_gp_kthr: 0% user + 0.1% kernel
+                                                                                                      0% 206/kworker/u9:2-hci0: 0% user + 0% kernel
+                                                                                                      0.1% 307/zygote64: 0% user + 0.1% kernel / faults: 144 minor
+                                                                                                      0% 2618/com.google.android.googlequicksearchbox:interactor: 0% user + 0% kernel / faults: 3 minor 3 major
+                                                                                                      0.1% 10923/com.android.remoteprovisioner: 0% user + 0.1% kernel / faults: 2 minor
+                                                                                                      0% 210/tombstoned: 0% user + 0% kernel
+                                                                                                      0% 349/audioserver: 0% user + 0% kernel / faults: 1 major
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 7103/libgoldfish-rild: 0% user + 0% kernel
+                                                                                                      0% 15/rcub/0: 0% user + 0% kernel
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 23/migration/1: 0% user + 0% kernel
+                                                                                                      0% 29/migration/2: 0% user + 0% kernel
+                                                                                                      0% 35/migration/3: 0% user + 0% kernel
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel
+                                                                                                      0% 345/android.hardware.power-service.example: 0% user + 0% kernel
+                                                                                                      0% 406/traced_probes: 0% user + 0% kernel
+                                                                                                      0% 450/android.hardware.biometrics.fingerprint@2.1-service: 0% user + 0% kernel
+                                                                                                      0% 1601/com.google.android.providers.media.module: 0% user + 0% kernel
+                                                                                                      0% 7509/com.tcpg007014.tcpgyt: 0% user + 0% kernel / faults: 1 minor
+                                                                                                      0% 11869/com.google.android.apps.photos: 0% user + 0% kernel
+                                                                                                      0% 13281/com.google.android.contacts: 0% user + 0% kernel
+                                                                                                      0% 13415/com.google.android.deskclock: 0% user + 0% kernel
+                                                                                                     +0% 14270/com.google.android.gms.persistent: 0% user + 0% kernel
+                                                                                                     +0% 14363/com.android.chrome: 0% user + 0% kernel
+                                                                                                     +0% 14399/com.google.android.apps.wellbeing: 0% user + 0% kernel
+                                                                                                    97% TOTAL: 1.4% user + 91% kernel + 0.2% iowait + 4% softirq
+                                                                                                    CPU usage from 1489853ms to 1489853ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:24:58.149 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                I  Late-enabling -Xcheck:jni
+2026-07-31 07:25:00.145 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                I  Using CollectorTypeCC GC.
+2026-07-31 07:25:00.159 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  Unexpected CPU variant for x86: x86_64.
+                                                                                                    Known variants: atom, sandybridge, silvermont, kabylake, default
+2026-07-31 07:25:02.606 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  Suspending all threads took: 50.639ms
+2026-07-31 07:25:02.655 15172-15172 re-initialized>         com.tcpg007014.tcpgyt                W  type=1400 audit(0.0:34): avc: granted { execute } for path="/data/data/com.tcpg007014.tcpgyt/code_cache/startup_agents/caf3f227-agent.so" dev="dm-34" ino=139415 scontext=u:r:untrusted_app:s0:c174,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c174,c256,c512,c768 tclass=file app=com.tcpg007014.tcpgyt
+2026-07-31 07:25:02.881 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  DexFile /data/data/com.tcpg007014.tcpgyt/code_cache/.studio/instruments-83583b27.jar is in boot class path but is not in a known location
+2026-07-31 07:25:03.274 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  Redefining intrinsic method java.lang.Thread java.lang.Thread.currentThread(). This may cause the unexpected use of the original definition of java.lang.Thread java.lang.Thread.currentThread()in methods that have already been compiled.
+2026-07-31 07:25:03.277 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  Redefining intrinsic method boolean java.lang.Thread.interrupted(). This may cause the unexpected use of the original definition of boolean java.lang.Thread.interrupted()in methods that have already been compiled.
+2026-07-31 07:25:03.345 15172-15172 Compatibil...geReporter com.tcpg007014.tcpgyt                D  Compat change id reported: 171979766; UID 10174; state: ENABLED
+2026-07-31 07:25:03.506 15172-15172 nativeloader            com.tcpg007014.tcpgyt                D  Configuring classloader-namespace for other apk /system_ext/framework/androidx.window.extensions.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/lib/x86_64:/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.tcpg007014.tcpgyt
+2026-07-31 07:25:03.521 15172-15172 nativeloader            com.tcpg007014.tcpgyt                D  Configuring classloader-namespace for other apk /system_ext/framework/androidx.window.sidecar.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/lib/x86_64:/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.tcpg007014.tcpgyt
+2026-07-31 07:25:03.525 15172-15172 ziparchive              com.tcpg007014.tcpgyt                W  Unable to open '/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/base.dm': No such file or directory
+2026-07-31 07:25:03.526 15172-15172 ziparchive              com.tcpg007014.tcpgyt                W  Unable to open '/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/base.dm': No such file or directory
+2026-07-31 07:25:04.532 15172-15172 nativeloader            com.tcpg007014.tcpgyt                D  Configuring classloader-namespace for other apk /data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/lib/x86_64:/data/app/~~-_vKOugcPQUWMSG8zBcidw==/com.tcpg007014.tcpgyt-rjz4dhFhAvN0rnhRZGTc7g==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.tcpg007014.tcpgyt
+2026-07-31 07:25:04.623 15172-15172 GraphicsEnvironment     com.tcpg007014.tcpgyt                V  ANGLE Developer option for 'com.tcpg007014.tcpgyt' set to: 'default'
+2026-07-31 07:25:04.641 15172-15172 GraphicsEnvironment     com.tcpg007014.tcpgyt                V  ANGLE GameManagerService for com.tcpg007014.tcpgyt: false
+2026-07-31 07:25:04.642 15172-15172 GraphicsEnvironment     com.tcpg007014.tcpgyt                V  Neither updatable production driver nor prerelease driver is supported.
+2026-07-31 07:25:04.723 15172-15172 NetworkSecurityConfig   com.tcpg007014.tcpgyt                D  No Network Security Config specified, using platform default
+2026-07-31 07:25:04.725 15172-15172 NetworkSecurityConfig   com.tcpg007014.tcpgyt                D  No Network Security Config specified, using platform default
+2026-07-31 07:25:07.378   500-15209 ActivityManager         system_server                        E    0.2% 342/android.hardware.wifi@1.0-service: 0% user + 0.2% kernel
+                                                                                                      0.2% 14815/com.google.android.projection.gearhead:shared: 0% user + 0.2% kernel / faults: 13 minor 1 major
+                                                                                                      0% 429/media.metrics: 0% user + 0% kernel / faults: 12 minor 42 major
+                                                                                                      0.1% 794/wpa_supplicant: 0% user + 0.1% kernel
+                                                                                                      0% 13506/android.process.acore: 0% user + 0% kernel / faults: 9 minor
+                                                                                                      0.1% 434/wificond: 0% user + 0.1% kernel
+                                                                                                      0.1% 955/android.hardware.gnss@2.0-service.ranchu: 0% user + 0.1% kernel
+                                                                                                      0% 169/android.system.suspend@1.0-service: 0% user + 0% kernel
+                                                                                                      0% 345/android.hardware.power-service.example: 0% user + 0% kernel
+                                                                                                      0% 11527/com.google.process.gapps: 0% user + 0% kernel / faults: 1 minor
+                                                                                                      0% 17/rcu_exp_gp_kthr: 0% user + 0% kernel
+                                                                                                      0% 19/migration/0: 0% user + 0% kernel
+                                                                                                      0% 29/migration/2: 0% user + 0% kernel
+                                                                                                      0% 35/migration/3: 0% user + 0% kernel
+                                                                                                      0% 148/hwservicemanager: 0% user + 0% kernel
+                                                                                                      0% 293/dhcpclient: 0% user + 0% kernel
+                                                                                                      0% 450/android.hardware.biometrics.fingerprint@2.1-service: 0% user + 0% kernel
+                                                                                                      0% 2618/com.google.android.googlequicksearchbox:interactor: 0% user + 0% kernel / faults: 21 minor 24 major
+                                                                                                      0% 6772/prng_seeder: 0% user + 0% kernel
+                                                                                                      0% 13285/kworker/2:1-virtio_vsock: 0% user + 0% kernel
+                                                                                                     +0% 14950/com.google.android.gms.persistent: 0% user + 0% kernel
+                                                                                                     +0% 14972/com.google.android.settings.intelligence: 0% user + 0% kernel
+                                                                                                     +0% 14986/com.android.vending: 0% user + 0% kernel
+                                                                                                     +0% 15057/com.android.settings: 0% user + 0% kernel
+                                                                                                     +0% 15080/com.google.android.setupwizard: 0% user + 0% kernel
+                                                                                                     +0% 15141/process-tracker: 0% user + 0% kernel
+                                                                                                     +0% 15172/com.tcpg007014.tcpgyt: 0% user + 0% kernel
+                                                                                                    96% TOTAL: 1.2% user + 91% kernel + 0.2% iowait + 3.4% softirq
+                                                                                                    CPU usage from 1584047ms to 1584047ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-07-31 07:25:07.985 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  Verification of void androidx.activity.ComponentActivity.<init>() took 150.923ms (1663.10 bytecodes/s) (8088B approximate peak alloc)
+2026-07-31 07:25:08.306 15172-15230 libEGL                  com.tcpg007014.tcpgyt                D  loaded /vendor/lib64/egl/libEGL_emulation.so
+2026-07-31 07:25:08.426 15172-15230 libEGL                  com.tcpg007014.tcpgyt                D  loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+2026-07-31 07:25:08.478 15172-15230 libEGL                  com.tcpg007014.tcpgyt                D  loaded /vendor/lib64/egl/libGLESv2_emulation.so
+2026-07-31 07:25:14.445 15172-15172 Compatibil...geReporter com.tcpg007014.tcpgyt                D  Compat change id reported: 237531167; UID 10174; state: DISABLED
+2026-07-31 07:25:14.529 15172-15227 Parcel                  com.tcpg007014.tcpgyt                W  Expecting binder but got null!
+2026-07-31 07:25:14.740 15172-15172 Choreographer           com.tcpg007014.tcpgyt                I  Skipped 501 frames!  The application may be doing too much work on its main thread.
+2026-07-31 07:25:21.865 15172-15172 pg007014.tcpgyt         com.tcpg007014.tcpgyt                W  Verification of void androidx.compose.ui.platform.AndroidComposeView.<init>(android.content.Context, kotlin.coroutines.CoroutineContext) took 410.613ms (2364.76 bytecodes/s) (32840B approximate peak alloc)

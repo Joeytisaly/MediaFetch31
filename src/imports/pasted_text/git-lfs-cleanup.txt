@@ -1,0 +1,126 @@
+Windows PowerShell
+版权所有 (C) Microsoft Corporation。保留所有权利。
+
+尝试新的跨平台 PowerShell https://aka.ms/pscore6
+
+PS C:\Users\TCPG> cd D:\test\MediaFetch31
+PS D:\test\MediaFetch31> $path = ".gitattributes"
+>> $content = Get-Content -LiteralPath $path -Raw
+>>
+>> $updated = $content `
+>>     -replace '(?m)^\*\.webp\s+filter=lfs diff=lfs merge=lfs -text\r?\n?', '' `
+>>     -replace '(?m)^\*\.jar\s+filter=lfs diff=lfs merge=lfs -text\r?\n?', ''
+>>
+>> if ($updated -eq $content) {
+>>     throw "未找到 *.webp 或 *.jar 的 Git LFS 规则，已停止，未写入任何文件。"
+>> }
+>>
+>> [System.IO.File]::WriteAllText(
+>>     (Resolve-Path $path),
+>>     $updated,
+>>     (New-Object System.Text.UTF8Encoding($false))
+>> )
+PS D:\test\MediaFetch31> git diff -- .gitattributes
+diff --git a/.gitattributes b/.gitattributes
+index f201872..64dc63e 100755
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -11,7 +11,6 @@
+ *.tiff               filter=lfs diff=lfs merge=lfs -text
+ *.tif                filter=lfs diff=lfs merge=lfs -text
+ *.ico                filter=lfs diff=lfs merge=lfs -text
+-*.webp               filter=lfs diff=lfs merge=lfs -text
+ *.psd                filter=lfs diff=lfs merge=lfs -text
+ *.ai                 filter=lfs diff=lfs merge=lfs -text
+ *.sketch             filter=lfs diff=lfs merge=lfs -text
+@@ -121,7 +120,6 @@
+ # ---------------------------------------------------------------------------
+ # Build Artifacts & Packages
+ # ---------------------------------------------------------------------------
+-*.jar                filter=lfs diff=lfs merge=lfs -text
+ *.war                filter=lfs diff=lfs merge=lfs -text
+ *.ear                filter=lfs diff=lfs merge=lfs -text
+ *.apk                filter=lfs diff=lfs merge=lfs -text
+PS D:\test\MediaFetch31> $assets = @(
+>>     "android/gradle/wrapper/gradle-wrapper.jar",
+>>     "android/app/src/main/res/mipmap-hdpi/ic_launcher.webp",
+>>     "android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp",
+>>     "android/app/src/main/res/mipmap-mdpi/ic_launcher.webp",
+>>     "android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp",
+>>     "android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp",
+>>     "android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp",
+>>     "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp",
+>>     "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp",
+>>     "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp",
+>>     "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"
+>> )
+>>
+PS D:\test\MediaFetch31> git add .gitattributes
+PS D:\test\MediaFetch31> git add --renormalize -- $assets
+PS D:\test\MediaFetch31> git status --short
+M  .gitattributes
+M  android/app/src/main/res/mipmap-hdpi/ic_launcher.webp
+M  android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+M  android/app/src/main/res/mipmap-mdpi/ic_launcher.webp
+M  android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+M  android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+M  android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+M  android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+M  android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+M  android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+M  android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+M  android/gradle/wrapper/gradle-wrapper.jar
+PS D:\test\MediaFetch31> git diff --cached --name-status
+M       .gitattributes
+M       android/app/src/main/res/mipmap-hdpi/ic_launcher.webp
+M       android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+M       android/app/src/main/res/mipmap-mdpi/ic_launcher.webp
+M       android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+M       android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+M       android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+M       android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+M       android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+M       android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+M       android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+M       android/gradle/wrapper/gradle-wrapper.jar
+PS D:\test\MediaFetch31> git commit -m "fix: store Android build assets outside LFS"
+[main 03d30a7] fix: store Android build assets outside LFS
+ 12 files changed, 2 deletions(-)
+PS D:\test\MediaFetch31> git push origin main
+Enumerating objects: 43, done.
+Counting objects: 100% (43/43), done.
+Delta compression using up to 20 threads
+Compressing objects: 100% (26/26), done.
+Writing objects: 100% (26/26), 74.00 KiB | 6.73 MiB/s, done.
+Total 26 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/Joeytisaly/MediaFetch31.git
+   ff8bae4..03d30a7  main -> main
+PS D:\test\MediaFetch31> git lfs ls-files
+PS D:\test\MediaFetch31> cd D:\test\MediaFetch31\android
+>> .\gradlew.bat :app:assembleDebug
+>> .\gradlew.bat :app:testDebugUnitTest
+>>
+Reusing configuration cache.
+
+BUILD SUCCESSFUL in 1s
+35 actionable tasks: 35 up-to-date
+Configuration cache entry reused.
+Reusing configuration cache.
+
+BUILD SUCCESSFUL in 1s
+24 actionable tasks: 24 up-to-date
+Configuration cache entry reused.
+PS D:\test\MediaFetch31\android> cd D:\test\MediaFetch31
+PS D:\test\MediaFetch31> git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+PS D:\test\MediaFetch31> git log --oneline -4
+03d30a7 (HEAD -> main, origin/main, origin/HEAD) fix: store Android build assets outside LFS
+ff8bae4 chore: add Android project scaffold
+02b578c fix: stop tracking prototype images with LFS
+30f83c5 Update files from Figma Make
+PS D:\test\MediaFetch31>
+
