@@ -53,6 +53,21 @@ private fun Ic(icon: ImageVector, tint: Color, size: Dp = 21.dp) {
     Icon(icon, contentDescription = null, modifier = Modifier.size(size), tint = tint)
 }
 
+/** 画布风格的弹窗关闭按钮：圆形浅色底 + 主色 ×。 */
+@Composable
+private fun SheetCloseButton(onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+        modifier = Modifier.size(36.dp)
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("×", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
@@ -496,8 +511,13 @@ private fun FilterSheet(
     )
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
-            Text("筛选任务", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
-            Text("按当前原型任务状态查看", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+                Column {
+                    Text("筛选任务", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+                    Text("按当前原型任务状态查看", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                SheetCloseButton(onDismiss)
+            }
             Spacer(Modifier.height(16.dp))
             options.chunked(2).forEach { row ->
                 Row(Modifier.fillMaxWidth().padding(bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -597,7 +617,7 @@ private fun TaskDetailSheet(
                     Text(task.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
                     Text(statusLabel(task.status), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                TextButton(onClick = onDismiss) { Text("关闭") }
+                SheetCloseButton(onDismiss)
             }
             Spacer(Modifier.height(14.dp))
 
@@ -733,7 +753,7 @@ private fun FormatSheet(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
                     Text("城市夜行", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
                     Text("12:48", style = MaterialTheme.typography.labelSmall, color = muted, fontWeight = FontWeight.SemiBold)
                 }
-                TextButton(onClick = onDismiss) { Text("关闭") }
+                SheetCloseButton(onDismiss)
             }
             Spacer(Modifier.height(16.dp))
 
@@ -778,12 +798,10 @@ private fun FormatSheet(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
                     Row(Modifier.padding(horizontal = 16.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             Modifier.size(20.dp).clip(RoundedCornerShape(50))
-                                .background(if (on) primary else Color.Transparent)
-                                .then(if (on) Modifier else Modifier),
+                                .background(if (on) primary else Color(0xFFD9D5DA).copy(alpha = 0.6f)),
                             contentAlignment = Alignment.Center
                         ) {
                             if (on) Ic(TcpgytIcons.Check, tint = Color.White, size = 12.dp)
-                            else Box(Modifier.size(20.dp).clip(RoundedCornerShape(50)).background(Color(0xFFD9D5DA).copy(alpha = 0.6f)))
                         }
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
