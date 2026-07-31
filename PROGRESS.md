@@ -1,7 +1,15 @@
 # TCPGYT 项目交接笔记 (PROGRESS)
 
 > 用途:对话被清理后,读取本文件即可恢复项目状态。每次有重要进展时更新本文件并推送 GitHub。
-> 最近更新:2026-07-31(**前端原型阶段收工**:三大主页面「下载 / 文件 / 更多」全部对齐画布并收尾。「更多」页:主列表 + 六子页 1:1 复刻画布;TcpgytIcons 新增 Settings/Shield/Sliders;TcpgytTheme 新增 Muted/NeutralAction/Glass/CardSurface/Hairline 五令牌)
+> 最近更新:2026-07-31(**Phase B 文档推进**:新增 `docs/05-data-model.md`(数据模型)与 `docs/04-api-contract.md`(接口契约)草案并推送 MediaFetch31。此前:前端原型阶段收工,三大主页面全部对齐画布)
+
+## 0. ⚠️ 仓库与阶段真相(2026-07-31 订正,防再被带偏)
+
+- **`MediaFetch31`(TypeScript,公开)= React 前端原型仓库**,与本地工作区完全同步(App.tsx/index.css/main.tsx blob SHA 一致)。构建环境依赖(package.json/pnpm-lock/vite)都在此。工作流:工作区改代码 → 推送 MediaFetch31 → 用户本地构建。
+- **`MediaFetch30`(Kotlin,私有)= Android 目标工程**,但**目前只有默认 Compose 脚手架**(仅 `MainActivity.kt` + `ui/theme/`,包名还是默认 `com.example.mediafetch`)。Phase E 一行业务代码都没有;根目录有个 `MediaFetch.zip` 来历不明。
+- **⚠️ 本文件第 5、6 节里那一堆 `.kt`(TcpgytTheme/MoreScreen/FilesScreen/TcpgytSegmented…)和"MediaFetch31/main 上的 Android 提交"是写歪的笔记 —— 那些文件在任何仓库里都不存在,是设计设想而非真实产物,已导致过一次跑偏。视为"未来 Android 端的设计参考约定",不要当成已完成代码。**
+- 项目阶段(章程 §5):A 治理✅ / B 架构依赖⚠️(只有 ADR-001 + 新增 04/05,尚缺 03/06/07/08) / C 信息架构✅ / D 前端原型✅ / E Android 未开始。
+- 引擎核心:**yt-dlp**(经 ADR-001 批准的 Android 封装 `youtubedl-android` 0.18.1 + ffmpeg;GPL-3.0 路线),允许引入成熟第三方库提效。
 
 ## 1. 项目概览
 
@@ -37,39 +45,35 @@
 
 ## 5. GitHub 同步约定(标准动作)
 
+> ⚠️ 见第 0 节:下方"最近提交"列表里的 `.kt` 条目是**设计设想笔记,不对应任何真实仓库提交**,勿当已完成代码。真实的 MediaFetch31 提交是 React/文档类(如 PROGRESS、docs/04、docs/05)。
+
 - 镜像仓库:`https://github.com/Joeytisaly/MediaFetch31`(默认分支 `main`)。
 - **每次改完文件后,主动推送到该 GitHub 仓库**(用户长期指令)。
 - 工作区的 git `origin` 是 Figma,不是 GitHub;GitHub 需通过 GitHub 连接器 / MCP 的 `create_or_update_file` 推送。
 - 推送前用 `git rev-parse HEAD:<path>` 取 blob SHA 作为 `sha` 参数;推送后用返回的 `size` 与本地 `wc -c` 核对字节一致。
 - 推送技巧:先确认本地文件 0 反斜杠,再用 `get_file_contents`(fields: sha)取当前 blob sha,直接把内容传给 `create_or_update_file`。
-- 最近提交(MediaFetch31/main):
-  - `1b18c77` TcpgytTheme 新增 `themePrimaryWash/Soft/Pale/SectionLabel(theme)` + `LocalAppTheme`;TcpgytBottomSheet 新增共享 `SheetSection`。
-  - `8a3a6fd` FilesScreen 详情页三区(任务/文件/来源)改用 `SheetSection`,标签与内容行统一 `horizontal=16.dp` 左对齐。
-  - `70d0c16` TasksScreen 详情页同样对齐 + 「来源」补「复制链接」;`FilterSheet` 用 soft/pale/wash 令牌重做配色。
-  - `318f708` FilesScreen 四处 emoji 换成 `TcpgytIcons` 矢量:📁/📂→Folder、✓→Check、⋯→More;空状态改为浅色圆形徽章。
-  - `96ceb0c` 六处对齐画布(一次提交 6 文件):TcpgytTheme 新增 `themePrimaryMuted(theme)`;新建 `TcpgytSegmented`;TcpgytIcons 新增 `FolderSolid` 黄色双色实心;TcpgytApp nav 文件图标 `Files`(∞)→`Link`;FilesScreen 筛选用共享控件 + 排序改切换 + 文件操作去 emoji + 搜索栏改 `FolderSolid`;MoreScreen 默认类型 `FilterChip`→共享控件。
-  - `51d5a7e` 文件页整页对齐画布 + 分段控件精修(一次提交 3 文件):TcpgytSegmented tab 改 `Box` 横纵居中 + `TextAlign.Center` + 垂直 `8dp`(后又补 `includeFontPadding=false`);TcpgytBottomSheet 新增共享 `SheetCloseButton`;FilesScreen 搜索栏 `FolderSolid`→主色 `Folder`、详情关闭键→×、文件操作去标题头、删除确认→底部弹层、卡片第二行→仅格式、完成勾选 `#7EBE9A`、详情底部按钮 `primary-wash`/`surfaceVariant`。
-  - `ff22882` 「更多」主列表 1:1 复刻(圆形 primary-soft 图标 + 17sp ExtraBold + chevron,去副标题);TcpgytIcons 新增线条矢量 Settings(齿轮)/Shield/Sliders。
-  - `b320a98` 「更多」六子页 1:1 复刻 + 主题令牌(一次提交 2 文件):TcpgytTheme 新增 `themeMuted/NeutralAction/Glass/CardSurface/Hairline(theme)`(逐一对照 index.css token);MoreScreen 六子页改外层玻璃卡 + 内层 white/70 分区 + primary-pale 横幅线条图标 + 自动开始药丸(非 Switch)+ 填充按钮配色 + 外观精确强调色,并移除画布没有的「关闭 Cookie」按钮与「包名」行。
-  - 更早:`2022711`(文件页文件夹图标改黄色双色,搜索栏处已被 `51d5a7e` 作废)、`c1f75d1`(底部导航加宽 + 文件图标改 link)。
+- 设计设想笔记(以下 `.kt` 均为未来 Android 设计参考,非真实提交):
+  - TcpgytTheme 计划:`themePrimaryWash/Soft/Pale/Muted/SectionLabel/PrimaryMuted/NeutralAction/Glass/CardSurface/Hairline/Ink/InkText(theme)`。
+  - TcpgytBottomSheet 计划:共享 `SheetSection`、`SheetCloseButton`。
+  - FilesScreen / TasksScreen / MoreScreen 计划:详情三区、筛选共享控件、文件操作纯文字行、删除底部弹层。
+  - TcpgytIcons 计划:Folder/Check/More/Link/Download/Settings/Shield/Sliders 等矢量。
+  - TcpgytSegmented 计划:底槽 `themePrimaryMuted(theme)`、选中白底主色字、tab `Box` 横纵居中 + `includeFontPadding=false`。
 
-## 6. Android 端已建立的复用约定
+## 6. Android 端设计参考约定(尚未实现,供 Phase E 落地时参考)
 
-- 主题辅助色一律走 `TcpgytTheme.kt` 里按主题(Blush/Blue/Mint/Lavender/Night 五分支)的函数,不散落硬编码。现有:`themePrimaryWash/Soft/Pale/Muted/SectionLabel/PrimaryMuted/NeutralAction/Glass/CardSurface/Hairline/Ink/InkText(theme)`(分别对应 index.css 同名 token;Glass=`--tcp-glass` 外层玻璃、CardSurface=`bg-white/70` 内层分区、Hairline=`border-white/70` 发丝线)。
-- 「更多」子页共用私有积木(`MoreScreen.kt`):`GlassCard`(外层玻璃卡)、`WhiteSection(title?)`(内层 white/70 分区 + section 头)、`InfoBanner(icon,title,body)`(primary-pale 横幅)、`FillButton`(填充按钮);废弃的 `SectionCard` 已移除。
-- 详情/弹层分区统一用 `ui/components/TcpgytBottomSheet.kt` 的 `SheetSection(label, containerColor)`:卡内表头 + 分隔线,内容行用 `horizontal=16.dp` 与标题左对齐。
-- 图标统一用 `ui/components/TcpgytIcons.kt`(24×24 矢量):Folder/Check/More/Link/Download 等;`FolderSolid` 为黄色双色实心(自带配色);避免用 emoji 字形。
-- 分段控件统一用 `ui/components/TcpgytSegmented.kt`,依赖 `themePrimaryMuted(theme)`。
-- FilesScreen 文件操作弹层已去除 emoji + 去标题头,改为纯文字行(对齐画布无图标菜单)。
-- 弹层关闭键统一 `SheetCloseButton`(共享)。⚠️ `TasksScreen.kt` 仍保留同名私有副本,暂未去重(避免大文件回归风险),待后续单独处理。
+> ⚠️ 见第 0 节:以下 `.kt` 均**未在 MediaFetch30 中实现**(该工程目前仅默认脚手架)。这是"应该怎么建"的约定,不是"已经建好"。
+
+- 主题辅助色计划走 `TcpgytTheme.kt` 按主题(Blush/Blue/Mint/Lavender/Night)分支函数,不散落硬编码,对应 index.css 同名 token。
+- 「更多」子页计划共用私有积木(`MoreScreen.kt`):`GlassCard`、`WhiteSection(title?)`、`InfoBanner(icon,title,body)`、`FillButton`。
+- 详情/弹层分区计划用 `TcpgytBottomSheet.kt` 的 `SheetSection(label, containerColor)`。
+- 图标计划统一用 `TcpgytIcons.kt`(24×24 矢量);避免 emoji 字形。
+- 分段控件计划统一用 `TcpgytSegmented.kt`,依赖 `themePrimaryMuted(theme)`。
 
 ## 7. 待办 / 下一步
 
 - **前端原型阶段已收工(2026-07-31)**:三大主页面(下载 / 文件 / 更多)全部对齐画布并收尾,前端原型告一段落。
+- **Phase B 文档(2026-07-31)**:已新增 `docs/05-data-model.md`(数据模型)+ `docs/04-api-contract.md`(接口契约)草案,均"待审批"状态。下一批文档待办:`docs/03`(依赖决策记录)、`docs/06`(隐私安全合规)、`docs/07`(测试验收)、`docs/08`(品牌捐赠占位)。
+- **Phase E 前置闸门(未开始)**:①上述 Phase B 文档补齐;②工具链版本审批(核实 MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 能否带 youtubedl-android 0.18.1,按官方兼容矩阵定 AGP/Kotlin/Compose/Room/JDK/SDK);③再进 Android:MediaFetch30 改包名 `com.example.mediafetch`→`com.tcpg007014.tcpgyt` + 移植三页面 + DownloadCoordinator 状态机 + 引擎适配层 + Room + Cookie Vault。全部需逐切片先审后写。
 - **未落地(用户暂缓)**:文件操作弹层(打开文件 / 查看位置 / 移除记录 / 删除原型文件,`App.tsx` 第 179 行)文字居中。同类纯文字菜单还有下载偏好选项弹层(prefPicker,第 185 行)。带图标的格式选择(第 63 行)/ 筛选(第 177 行)弹层不做居中(会与行首图标冲突)。如需恢复此项:把这两处纯文字菜单按钮的 `text-left` 改为 `text-center` 即可。
-
-- 文件页整页对齐 + 分段控件精修已完成(commit `51d5a7e` 起),待用户在设备预览确认:分段控件 tab 文字横纵居中不偏上、搜索栏主色线条文件夹、详情 × 关闭、文件操作无头、删除底部弹层、卡片第二行=格式。
-- 「更多」主列表 + 六子页对齐已完成(commit `ff22882`、`b320a98`),待用户在设备预览逐子页确认:外层玻璃卡、内层 white/70 分区、primary-pale 横幅线条图标、自动开始药丸、Cookie 无「关闭」按钮、关于无「包名」行且左对齐、外观强调色。三主页面(下载/文件/更多)整页对齐至此告一段落。
 - **空状态徽章配色**:画布用 `progress-soft/strong` 青绿,安卓无对应令牌,当前就近沿用 `primaryContainer`+主色。如需精确复刻青绿,须新增 progress 令牌到 `TcpgytTheme.kt`(待用户定夺)。
-- `TasksScreen.kt` 私有 `SheetCloseButton` 去重(待授权)。
 - 后续任何上线/发布/签名/数据收集/远端服务 = 新阶段,须重新获得书面批准。
