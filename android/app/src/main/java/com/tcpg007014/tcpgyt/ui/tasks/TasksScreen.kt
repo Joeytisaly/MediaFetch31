@@ -143,8 +143,9 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
             Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                // 左：粘贴/链接图标 —— 画布用 primary-soft（浅）
                 Box(
-                    Modifier.size(48.dp).clip(RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)),
+                    Modifier.size(48.dp).clip(RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.40f)),
                     contentAlignment = Alignment.Center
                 ) { Ic(TcpgytIcons.Link, tint = primary) }
                 BasicTextField(
@@ -161,19 +162,20 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                         }
                     }
                 )
+                // 右：启动解析按钮 —— 画布用 primary-wash（中），禁用时仅降透明度（不透明消失）
                 val canParse = link.isNotBlank() && state != ParseState.Loading
                 Box(
                     Modifier
                         .size(48.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(if (canParse) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if (canParse) 1f else 0.5f))
                         .clickable(enabled = canParse) { state = ParseState.Loading },
                     contentAlignment = Alignment.Center
                 ) {
                     if (state == ParseState.Loading) {
                         CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp, color = primary)
                     } else {
-                        Ic(TcpgytIcons.Arrow, tint = if (link.isNotBlank()) primary else muted.copy(alpha = 0.3f))
+                        Ic(TcpgytIcons.Arrow, tint = primary.copy(alpha = if (canParse) 1f else 0.5f))
                     }
                 }
             }
@@ -439,55 +441,60 @@ private fun TaskCard(task: DemoTask, onClick: () -> Unit, onAction: (String) -> 
         shape = RoundedCornerShape(26.dp),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(56.dp).clip(RoundedCornerShape(18.dp)).background(iconBg), contentAlignment = Alignment.Center) {
-                    Ic(icon, tint = iconTint, size = 24.dp)
-                }
-                Spacer(Modifier.width(12.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(task.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
-                    Text(task.format, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
-                }
-                Surface(
-                    onClick = { if (actionKey.isNotEmpty()) onAction(actionKey) else onClick() },
-                    shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.primaryContainer
-                ) {
-                    Text(actionLabel, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp))
-                }
+        // 画布结构：图标独占左侧；标题/动作/状态/进度全部在右侧同一列内缩进对齐
+        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.Top) {
+            Box(Modifier.size(56.dp).clip(RoundedCornerShape(18.dp)).background(iconBg), contentAlignment = Alignment.Center) {
+                Ic(icon, tint = iconTint, size = 24.dp)
             }
-            Spacer(Modifier.height(12.dp))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = when (task.status) {
-                        TaskStatus.Done   -> Color(0xFFE8F5EC)
-                        TaskStatus.Failed -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-                        else              -> Color.White.copy(alpha = 0.7f)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+                    Column(Modifier.weight(1f)) {
+                        Text(task.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
+                        Text(task.format, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                     }
-                ) {
-                    Text(
-                        statusLabel(task.status),
-                        style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black,
+                    Spacer(Modifier.width(8.dp))
+                    // 动作按钮：画布用 primary-soft 浅色幽灵胶囊
+                    Surface(
+                        onClick = { if (actionKey.isNotEmpty()) onAction(actionKey) else onClick() },
+                        shape = RoundedCornerShape(50),
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                    ) {
+                        Text(actionLabel, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp))
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        shape = RoundedCornerShape(50),
                         color = when (task.status) {
-                            TaskStatus.Done   -> Color(0xFF5B9A77)
-                            TaskStatus.Failed -> MaterialTheme.colorScheme.primary
-                            else              -> MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            TaskStatus.Done   -> Color(0xFFE8F5EC)
+                            TaskStatus.Failed -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                            else              -> Color.White.copy(alpha = 0.7f)
+                        }
+                    ) {
+                        Text(
+                            statusLabel(task.status),
+                            style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black,
+                            color = when (task.status) {
+                                TaskStatus.Done   -> Color(0xFF5B9A77)
+                                TaskStatus.Failed -> MaterialTheme.colorScheme.primary
+                                else              -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        )
+                    }
+                    Text(detail, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+                }
+                if (active) {
+                    Spacer(Modifier.height(10.dp))
+                    LinearProgressIndicator(
+                        progress = { task.progress },
+                        modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = Color.White.copy(alpha = 0.7f)
                     )
                 }
-                Text(detail, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
-            }
-            if (active) {
-                Spacer(Modifier.height(10.dp))
-                LinearProgressIndicator(
-                    progress = { task.progress },
-                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = Color.White.copy(alpha = 0.7f)
-                )
             }
         }
     }
