@@ -115,7 +115,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
 
         Spacer(Modifier.height(16.dp))
 
-        ScrollableTabRow(
+        PrimaryScrollableTabRow(
             selectedTabIndex = StatusFilter.entries.indexOf(activeFilter),
             edgePadding = 0.dp,
             modifier = Modifier.fillMaxWidth()
