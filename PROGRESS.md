@@ -45,7 +45,7 @@
 
 ## 5. GitHub 同步约定(标准动作)
 
-> ⚠️ 见第 0 节:下方"最近提交"列表里的 `.kt` 条目是**设计设想笔记,不对应任何真实仓库提交**,勿当已完成代码。真实的 MediaFetch31 提交是 React/文档类(如 PROGRESS、docs/04、docs/05)。
+> ⚠️ 见第 0 节:下方"设计设想笔记"里的 `.kt` 条目是**未来 Android 设计参考,不对应任何真实仓库提交**,勿当已完成代码。真实的 MediaFetch31 提交是 React/文档类(如 PROGRESS、docs/04、docs/05)。
 
 - 镜像仓库:`https://github.com/Joeytisaly/MediaFetch31`(默认分支 `main`)。
 - **每次改完文件后,主动推送到该 GitHub 仓库**(用户长期指令)。
