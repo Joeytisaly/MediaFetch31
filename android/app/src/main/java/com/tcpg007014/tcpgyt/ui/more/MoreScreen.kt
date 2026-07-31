@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.theme.AppTheme
 
 private enum class SettingPage {
@@ -220,7 +221,7 @@ fun MoreScreen(
             text = {
                 Text(
                     when (dataConfirm) {
-                        "清理临时文件" -> "仅清除原型中的临时文件标记，不会触砹设备文件。"
+                        "清理临时文件" -> "仅清除原型中的临时文件标记，不会触碰设备文件。"
                         "清空下载历史" -> "仅隐藏已完成、失败或取消的任务记录；不会删除媒体文件。"
                         else -> "仅恢复原型中的下载偏好；不会影响文件或设备设置。"
                     }
@@ -379,9 +380,9 @@ private fun DownloadPrefsPage(
         Spacer(Modifier.height(24.dp))
     }
 
-    // Pref picker as ModalBottomSheet — matches React prototype prefPicker style
+    // 偏好选择弹窗 —— 统一走 TcpgytBottomSheet：完全展开 + 可滚动
     if (localPrefPicker != null) {
-        ModalBottomSheet(onDismissRequest = { localPrefPicker = null }) {
+        TcpgytBottomSheet(onDismiss = { localPrefPicker = null }) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
                 Text(localPrefPicker!!, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
                 Spacer(Modifier.height(16.dp))
@@ -686,7 +687,7 @@ private fun AboutPage() {
         SectionCard("应用信息") {
             listOf(
                 "开发者" to "TCPG007014 (YaR)",
-                "联系邮笱" to "ChengYuan.tcpg@gnail.com",
+                "联系邮箱" to "ChengYuan.tcpg@gnail.com",
                 "包名" to "com.tcpg007014.tcpgyt",
                 "隐私" to "数据仅保存在本机"
             ).forEachIndexed { i, (label, value) ->
@@ -710,7 +711,7 @@ private fun AboutPage() {
                 Text("ℹ️", style = MaterialTheme.typography.titleLarge)
                 Column {
                     Text("支持开发暂未开放", style = MaterialTheme.typography.titleSmall)
-                    Text("尚未配置捐贈信息，因此不会显示链接或跳转入口。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("尚未配置捐赠信息，因此不会显示链接或跳转入口。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
