@@ -2,6 +2,8 @@
 
 React + Vite + Tailwind CSS project running inside Figma Make.
 
+> **启动时请先读 `PROGRESS.md`** —— 它是本项目的交接笔记,记录当前进度、设计规则与 GitHub 同步约定,用于在对话被清理后恢复项目状态。
+
 ## Development Server
 
 A Vite development server is **already running** on `$PORT` (default 8443). You don't need to start it manually.
