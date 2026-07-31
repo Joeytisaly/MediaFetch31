@@ -20,7 +20,6 @@ object TcpgytIcons {
             strokeLineWidth = 2f,
             strokeLineCap = StrokeCap.Round
         ) {
-            // Arc from upper-right to upper-left (300°, clockwise), gap at top
             moveTo(15.5f, 5.94f)
             arcTo(7f, 7f, 0f, true, true, 8.5f, 5.94f)
         }
@@ -35,10 +34,10 @@ object TcpgytIcons {
             strokeLineCap = StrokeCap.Round
         ) {
             moveTo(12f, 12f)
-            cubicTo(13f, 8f, 20f, 8f, 20f, 12f)
-            cubicTo(20f, 16f, 13f, 16f, 12f, 12f)
-            cubicTo(11f, 16f, 4f, 16f, 4f, 12f)
-            cubicTo(4f, 8f, 11f, 8f, 12f, 12f)
+            curveTo(13f, 8f, 20f, 8f, 20f, 12f)
+            curveTo(20f, 16f, 13f, 16f, 12f, 12f)
+            curveTo(11f, 16f, 4f, 16f, 4f, 12f)
+            curveTo(4f, 8f, 11f, 8f, 12f, 12f)
         }
     }
 
