@@ -47,7 +47,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         )
         Spacer(Modifier.height(16.dp))
 
-        // "全部文件" header row with sort button
+        // Header row with sort button
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -113,19 +113,34 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
 
-        // Filter chips
+        // Filter pill tabs — glass pill style matching React prototype
         Row(
             Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             listOf("全部", "音频", "视频").forEach { label ->
-                FilterChip(selected = filter == label, onClick = { filter = label }, label = { Text(label) })
+                val selected = filter == label
+                Surface(
+                    onClick = { filter = label },
+                    shape = RoundedCornerShape(50),
+                    color = if (selected) MaterialTheme.colorScheme.primaryContainer
+                            else Color.White.copy(alpha = 0.65f)
+                ) {
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (selected) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp)
+                    )
+                }
             }
         }
 
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(6.dp))
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("显示文件", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text("${shown.size} 项", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)

@@ -3,20 +3,75 @@ package com.tcpg007014.tcpgyt.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 
 enum class AppTheme(val label: String) { Blush("淡粉"), Blue("淡蓝"), Mint("薄荷"), Lavender("薰衣草"), Night("深色") }
 
-fun themeGradient(theme: AppTheme): Brush = Brush.verticalGradient(
-    colors = when (theme) {
-        AppTheme.Blush    -> listOf(Color(0xFFF5BBC6), Color(0xFFF7C9D2), Color(0xFFFAD4D7), Color(0xFFFDE8EC), Color(0xFFFFF9F8))
-        AppTheme.Blue     -> listOf(Color(0xFFB6D8EE), Color(0xFFC3E1F2), Color(0xFFD9EFFA), Color(0xFFEBF5FD), Color(0xFFF5FAFF))
-        AppTheme.Mint     -> listOf(Color(0xFFB9E2D1), Color(0xFFC8E9DA), Color(0xFFDCEFE5), Color(0xFFEBF7F0), Color(0xFFF4FCF8))
-        AppTheme.Lavender -> listOf(Color(0xFFD5C4EC), Color(0xFFDBCDF1), Color(0xFFECE4F8), Color(0xFFF3EFFC), Color(0xFFFAF8FF))
-        AppTheme.Night    -> listOf(Color(0xFF102A42), Color(0xFF0E2537), Color(0xFF0B2034), Color(0xFF091C2B), Color(0xFF081827))
+private data class GradColors(val top: Color, val bot: Color, val s1: Color, val s2: Color)
+
+private fun gradColors(theme: AppTheme) = when (theme) {
+    AppTheme.Blush    -> GradColors(Color(0xFFF5BBC6), Color(0xFFFFF9F8), Color(0xFFF3B8C4), Color(0xFFF4BBC6))
+    AppTheme.Blue     -> GradColors(Color(0xFFB6D8EE), Color(0xFFF5FAFF), Color(0xFFB3D8F0), Color(0xFFBDD9EF))
+    AppTheme.Mint     -> GradColors(Color(0xFFB9E2D1), Color(0xFFF4FCF8), Color(0xFFB5E0CE), Color(0xFFC3E8D8))
+    AppTheme.Lavender -> GradColors(Color(0xFFD5C4EC), Color(0xFFFAF8FF), Color(0xFFD0BEEA), Color(0xFFDBCAEF))
+    AppTheme.Night    -> GradColors(Color(0xFF102A42), Color(0xFF081827), Color(0xFF1C3858), Color(0xFF0E2438))
+}
+
+/**
+ * Multi-layer radial + linear gradient matching the React prototype canvas.
+ * Layers: base vertical gradient, upper-left color cloud, lower-right color cloud,
+ * upper-right white glow — mirrors CSS radial-gradient stack at 17%/25%, 68%/68%, 80%/28%.
+ */
+fun DrawScope.drawThemeBackground(theme: AppTheme) {
+    val c = gradColors(theme)
+
+    // 1. Base linear gradient
+    drawRect(
+        brush = Brush.verticalGradient(listOf(c.top, c.bot), startY = 0f, endY = size.height)
+    )
+
+    if (theme == AppTheme.Night) {
+        // Night: single subtle cool accent glow, no color clouds
+        val hx = size.width * 0.75f
+        val hy = size.height * 0.15f
+        val hr = size.width * 0.55f
+        drawCircle(
+            brush = Brush.radialGradient(
+                listOf(Color(0xFF76C2ED).copy(alpha = 0.07f), Color.Transparent),
+                Offset(hx, hy), hr
+            ),
+            radius = hr, center = Offset(hx, hy)
+        )
+        return
     }
-)
+
+    // 2. Large color cloud — upper-left (matches React: circle at 17% 25%)
+    val s1 = Offset(size.width * 0.17f, size.height * 0.25f)
+    val r1 = size.width * 0.65f
+    drawCircle(
+        brush = Brush.radialGradient(listOf(c.s1.copy(alpha = 0.62f), Color.Transparent), s1, r1),
+        radius = r1, center = s1
+    )
+
+    // 3. Secondary cloud — lower center-right (matches React: circle at 68% 68%)
+    val s2 = Offset(size.width * 0.68f, size.height * 0.68f)
+    val r2 = size.width * 0.55f
+    drawCircle(
+        brush = Brush.radialGradient(listOf(c.s2.copy(alpha = 0.42f), Color.Transparent), s2, r2),
+        radius = r2, center = s2
+    )
+
+    // 4. White glow — upper-right (matches React: circle at 80% 28%)
+    val sh = Offset(size.width * 0.80f, size.height * 0.28f)
+    val rh = size.width * 0.32f
+    drawCircle(
+        brush = Brush.radialGradient(listOf(Color.White.copy(alpha = 0.82f), Color.Transparent), sh, rh),
+        radius = rh, center = sh
+    )
+}
 
 fun themePrimaryWash(theme: AppTheme): Color = when (theme) {
     AppTheme.Blush    -> Color(0xFFFFD4DF)

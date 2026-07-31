@@ -3,11 +3,14 @@ package com.tcpg007014.tcpgyt.ui.shell
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -18,7 +21,7 @@ import com.tcpg007014.tcpgyt.ui.more.MoreScreen
 import com.tcpg007014.tcpgyt.ui.tasks.TasksScreen
 import com.tcpg007014.tcpgyt.ui.theme.AppTheme
 import com.tcpg007014.tcpgyt.ui.theme.TcpgytTheme
-import com.tcpg007014.tcpgyt.ui.theme.themeGradient
+import com.tcpg007014.tcpgyt.ui.theme.drawThemeBackground
 import com.tcpg007014.tcpgyt.ui.theme.themePrimaryWash
 import kotlinx.coroutines.launch
 
@@ -36,7 +39,7 @@ fun TcpgytApp() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(brush = themeGradient(savedTheme))
+                .drawBehind { drawThemeBackground(savedTheme) }
         ) {
             Scaffold(
                 containerColor = Color.Transparent,
@@ -96,26 +99,26 @@ private fun FloatingNavBar(
         shadowElevation = 14.dp
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Destination.entries.forEach { dest ->
                 val selected = currentTab == dest
                 Box(
                     modifier = Modifier
-                        .size(52.dp)
+                        .size(56.dp)
                         .clip(CircleShape)
                         .background(if (selected) primaryWash else Color.Transparent),
                     contentAlignment = Alignment.Center
                 ) {
                     IconButton(
                         onClick = { onTabChange(dest) },
-                        modifier = Modifier.size(52.dp)
+                        modifier = Modifier.size(56.dp)
                     ) {
                         Icon(
                             imageVector = when (dest) {
                                 Destination.Tasks -> TcpgytIcons.Tasks
-                                Destination.Files -> TcpgytIcons.Files
+                                Destination.Files -> Icons.Outlined.Link
                                 Destination.More  -> TcpgytIcons.More
                             },
                             contentDescription = dest.label,
