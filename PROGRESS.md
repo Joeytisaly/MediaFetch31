@@ -1,14 +1,14 @@
 # TCPGYT 项目交接笔记 (PROGRESS)
 
 > 用途:对话被清理后,读取本文件即可恢复项目状态。每次有重要进展时更新本文件并推送 GitHub。
-> 最近更新:2026-07-31(**Phase B 文档推进**:新增 `docs/05-data-model.md`(数据模型)与 `docs/04-api-contract.md`(接口契约)草案并推送 MediaFetch31。此前:前端原型阶段收工,三大主页面全部对齐画布)
+> 最近更新:2026-07-31(**Phase B 文档收尾**:`docs/03~08` 全部草案完成并推送 MediaFetch31 —— 03 依赖决策 / 04 接口契约 / 05 数据模型 / 06 隐私安全 / 07 测试验收 / 08 品牌捐赠,均"待审批"。此前:前端原型阶段收工,三大主页面全部对齐画布)
 
 ## 0. ⚠️ 仓库与阶段真相(2026-07-31 订正,防再被带偏)
 
 - **`MediaFetch31`(TypeScript,公开)= React 前端原型仓库**,与本地工作区完全同步(App.tsx/index.css/main.tsx blob SHA 一致)。构建环境依赖(package.json/pnpm-lock/vite)都在此。工作流:工作区改代码 → 推送 MediaFetch31 → 用户本地构建。
 - **`MediaFetch30`(Kotlin,私有)= Android 目标工程**,但**目前只有默认 Compose 脚手架**(仅 `MainActivity.kt` + `ui/theme/`,包名还是默认 `com.example.mediafetch`)。Phase E 一行业务代码都没有;根目录有个 `MediaFetch.zip` 来历不明。
 - **⚠️ 本文件第 5、6 节里那一堆 `.kt`(TcpgytTheme/MoreScreen/FilesScreen/TcpgytSegmented…)和"MediaFetch31/main 上的 Android 提交"是写歪的笔记 —— 那些文件在任何仓库里都不存在,是设计设想而非真实产物,已导致过一次跑偏。视为"未来 Android 端的设计参考约定",不要当成已完成代码。**
-- 项目阶段(章程 §5):A 治理✅ / B 架构依赖⚠️(只有 ADR-001 + 新增 04/05,尚缺 03/06/07/08) / C 信息架构✅ / D 前端原型✅ / E Android 未开始。
+- 项目阶段(章程 §5):A 治理✅ / B 架构依赖✅(ADR-001 + docs 03~08 草案全齐,待审批) / C 信息架构✅ / D 前端原型✅ / E Android 未开始(前置=工具链版本审批)。
 - 引擎核心:**yt-dlp**(经 ADR-001 批准的 Android 封装 `youtubedl-android` 0.18.1 + ffmpeg;GPL-3.0 路线),允许引入成熟第三方库提效。
 
 ## 1. 项目概览
@@ -72,8 +72,8 @@
 ## 7. 待办 / 下一步
 
 - **前端原型阶段已收工(2026-07-31)**:三大主页面(下载 / 文件 / 更多)全部对齐画布并收尾,前端原型告一段落。
-- **Phase B 文档(2026-07-31)**:已新增 `docs/05-data-model.md`(数据模型)+ `docs/04-api-contract.md`(接口契约)草案,均"待审批"状态。下一批文档待办:`docs/03`(依赖决策记录)、`docs/06`(隐私安全合规)、`docs/07`(测试验收)、`docs/08`(品牌捐赠占位)。
-- **Phase E 前置闸门(未开始)**:①上述 Phase B 文档补齐;②工具链版本审批(核实 MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 能否带 youtubedl-android 0.18.1,按官方兼容矩阵定 AGP/Kotlin/Compose/Room/JDK/SDK);③再进 Android:MediaFetch30 改包名 `com.example.mediafetch`→`com.tcpg007014.tcpgyt` + 移植三页面 + DownloadCoordinator 状态机 + 引擎适配层 + Room + Cookie Vault。全部需逐切片先审后写。
+- **Phase B 文档已全部完成(2026-07-31,均"待审批"草案)**:`docs/03`(依赖决策,已核验 D-001 `io.github.junkfood02.youtubedl-android:library:0.18.1` 在 Maven Central 存在 + 许可 GPL-3.0;ffmpeg 版本/许可标待审批)、`docs/04`(接口契约)、`docs/05`(数据模型)、`docs/06`(隐私安全)、`docs/07`(测试验收)、`docs/08`(品牌捐赠占位)。加上既有 `docs/00~02`,章程蓝图 §7 的文档集齐。
+- **Phase E 前置闸门(仅剩工具链审批)**:①Phase B 文档已补齐✅;②**工具链版本审批(下一步)**:按官方兼容矩阵核实 MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 能否承载 youtubedl-android 0.18.1,定 AGP/Kotlin/Compose/Room/JDK/SDK + ffmpeg 精确版本与许可;③再进 Android:MediaFetch30 改包名 `com.example.mediafetch`→`com.tcpg007014.tcpgyt` + 移植三页面 + DownloadCoordinator 状态机 + 引擎适配层 + Room + Cookie Vault。全部需逐切片先审后写。
 - **未落地(用户暂缓)**:文件操作弹层(打开文件 / 查看位置 / 移除记录 / 删除原型文件,`App.tsx` 第 179 行)文字居中。同类纯文字菜单还有下载偏好选项弹层(prefPicker,第 185 行)。带图标的格式选择(第 63 行)/ 筛选(第 177 行)弹层不做居中(会与行首图标冲突)。如需恢复此项:把这两处纯文字菜单按钮的 `text-left` 改为 `text-center` 即可。
 - **空状态徽章配色**:画布用 `progress-soft/strong` 青绿,安卓无对应令牌,当前就近沿用 `primaryContainer`+主色。如需精确复刻青绿,须新增 progress 令牌到 `TcpgytTheme.kt`(待用户定夺)。
 - 后续任何上线/发布/签名/数据收集/远端服务 = 新阶段,须重新获得书面批准。
