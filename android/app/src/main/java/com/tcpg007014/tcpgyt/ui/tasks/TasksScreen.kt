@@ -22,8 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tcpg007014.tcpgyt.ui.components.SheetSection
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
+import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
+import com.tcpg007014.tcpgyt.ui.theme.themePrimaryPale
+import com.tcpg007014.tcpgyt.ui.theme.themePrimarySoft
+import com.tcpg007014.tcpgyt.ui.theme.themePrimaryWash
 
 private enum class ParseState { Idle, Loading, Result, Error }
 private enum class TaskStatus { Queued, Downloading, Paused, Done, Failed, Cancelled }
@@ -54,13 +59,13 @@ private fun Ic(icon: ImageVector, tint: Color, size: Dp = 21.dp) {
     Icon(icon, contentDescription = null, modifier = Modifier.size(size), tint = tint)
 }
 
-/** 画布风格的弹窗关闭按钮：圆形浅色底 + 主色 ×。 */
+/** 画布风格的弹窗关闭按钮：圆形浅色底(primary-soft) + 主色 ×。 */
 @Composable
 private fun SheetCloseButton(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+        color = themePrimarySoft(LocalAppTheme.current),
         modifier = Modifier.size(36.dp)
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -346,6 +351,10 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                     clipboard.setText(AnnotatedString(task.title))
                     selectedTaskId = null; onSnack("已复制标题")
                 },
+                onCopyLink = {
+                    clipboard.setText(AnnotatedString("https://example.com/media"))
+                    onSnack("已复制来源链接")
+                },
                 onAction = { action ->
                     tasks = tasks.map { t ->
                         if (t.id != id) t
@@ -517,6 +526,12 @@ private fun FilterSheet(
         "下载失败" to TcpgytIcons.Info,
         "已取消" to TcpgytIcons.Power
     )
+    val theme = LocalAppTheme.current
+    val soft = themePrimarySoft(theme)
+    val pale = themePrimaryPale(theme)
+    val wash = themePrimaryWash(theme)
+    val primary = MaterialTheme.colorScheme.primary
+
     TcpgytBottomSheet(onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
@@ -528,28 +543,35 @@ private fun FilterSheet(
             }
             Spacer(Modifier.height(16.dp))
             options.chunked(2).forEach { row ->
-                Row(Modifier.fillMaxWidth().padding(bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     row.forEach { (name, icon) ->
                         val selected = active == name
                         Card(
                             modifier = Modifier.weight(1f).clickable { onSelect(name) },
                             colors = CardDefaults.cardColors(
-                                containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
-                                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                containerColor = if (selected) pale else Color.White.copy(alpha = 0.7f)
                             ),
-                            border = if (selected) androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary) else null,
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (selected) primary else Color.White.copy(alpha = 0.7f)
+                            ),
                             shape = RoundedCornerShape(18.dp),
                             elevation = CardDefaults.cardElevation(0.dp)
                         ) {
                             Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Box(
-                                    Modifier.size(32.dp).clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.primaryContainer),
+                                    Modifier.size(32.dp).clip(RoundedCornerShape(50)).background(if (selected) wash else soft),
                                     contentAlignment = Alignment.Center
-                                ) { Ic(icon, tint = MaterialTheme.colorScheme.primary, size = 16.dp) }
+                                ) { Ic(icon, tint = primary, size = 16.dp) }
                                 Spacer(Modifier.width(8.dp))
                                 Column {
-                                    Text(name, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-                                    Text("${counts[name] ?: 0} 项", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(
+                                        name,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = if (selected) primary else MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text("${counts[name] ?: 0} 项", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
@@ -558,7 +580,7 @@ private fun FilterSheet(
             }
 
             Spacer(Modifier.height(8.dp))
-            HorizontalDivider(color = Color.White.copy(alpha = 0.5f), thickness = 0.5.dp)
+            HorizontalDivider(color = Color.White.copy(alpha = 0.7f), thickness = 0.5.dp)
             Spacer(Modifier.height(12.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Text("当前结果", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -567,7 +589,7 @@ private fun FilterSheet(
             Spacer(Modifier.height(8.dp))
             if (shown.isEmpty()) {
                 Box(
-                    Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)).padding(16.dp),
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(pale).padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("没有匹配的任务", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -577,8 +599,8 @@ private fun FilterSheet(
                     Surface(
                         onClick = { onSelectTask(task.id) },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                        shape = RoundedCornerShape(16.dp),
+                        color = pale
                     ) {
                         Row(
                             Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 11.dp),
@@ -603,6 +625,7 @@ private fun TaskDetailSheet(
     onSimulateFail: () -> Unit,
     onFileOps: (() -> Unit)? = null,
     onCopyTitle: (() -> Unit)? = null,
+    onCopyLink: (() -> Unit)? = null,
     onAction: (String) -> Unit
 ) {
     val active = task.status == TaskStatus.Downloading || task.status == TaskStatus.Paused
@@ -651,58 +674,55 @@ private fun TaskDetailSheet(
                 Spacer(Modifier.height(10.dp))
             }
 
-            Text("文件", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
-            Card(
-                Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
-                shape = RoundedCornerShape(18.dp), elevation = CardDefaults.cardElevation(0.dp)
-            ) {
-                Column {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable { onCopyTitle?.invoke() }
-                            .padding(horizontal = 14.dp, vertical = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("复制标题", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-                        Text(task.title, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, maxLines = 1)
-                    }
-                    HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+            // 文件 section — 标题在卡内表头，与内容行共用 16dp 左内边距(对齐画布)
+            SheetSection("文件") {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onCopyTitle?.invoke() }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("复制标题", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                    Text(task.title, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, maxLines = 1)
+                }
+                HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
 
-                    val fileRows = buildList {
-                        add("格式" to task.format)
-                        add("模拟文件名" to "${task.title}.$ext")
-                        add("保存位置" to "Download / TCPGYT")
-                        if (task.status == TaskStatus.Done && task.completedAt.isNotEmpty()) {
-                            add("完成时间" to task.completedAt)
-                        }
+                val fileRows = buildList {
+                    add("格式" to task.format)
+                    add("模拟文件名" to "${task.title}.$ext")
+                    add("保存位置" to "Download / TCPGYT")
+                    if (task.status == TaskStatus.Done && task.completedAt.isNotEmpty()) {
+                        add("完成时间" to task.completedAt)
                     }
-                    fileRows.forEachIndexed { i, (label, value) ->
-                        Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-                        }
-                        if (i < fileRows.size - 1) HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+                }
+                fileRows.forEachIndexed { i, (label, value) ->
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
                     }
+                    if (i < fileRows.size - 1) HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
                 }
             }
 
             Spacer(Modifier.height(10.dp))
 
-            Text("来源", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
-            Card(
-                Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
-                shape = RoundedCornerShape(18.dp), elevation = CardDefaults.cardElevation(0.dp)
-            ) {
-                Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            // 来源 section — 含「复制链接」，对齐画布
+            SheetSection("来源") {
+                Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("平台", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text("示例媒体平台", style = MaterialTheme.typography.bodyMedium)
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
-                Text("https://example.com/media", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp))
+                Row(
+                    Modifier.fillMaxWidth().padding(start = 16.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("https://example.com/media", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f), maxLines = 1)
+                    TextButton(onClick = { onCopyLink?.invoke() }) { Text("复制链接", style = MaterialTheme.typography.labelSmall) }
+                }
             }
 
             Spacer(Modifier.height(14.dp))
