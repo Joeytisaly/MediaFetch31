@@ -50,8 +50,8 @@ private val themeOptions = listOf(
     ThemeOption(AppTheme.Blush, "淡粉玻璃", "温柔奶油底 · 玫红强调", listOf(Color(0xFFF6B8C8), Color(0xFFFFF9F8), Color(0xFFED1D55))),
     ThemeOption(AppTheme.Blue, "淡蓝玻璃", "雾蓝光晕 · 清透蓝强调", listOf(Color(0xFFB9D9EE), Color(0xFFF7FBFF), Color(0xFF287FBD))),
     ThemeOption(AppTheme.Mint, "薄荷玻璃", "雾绿光晕 · 青绿强调", listOf(Color(0xFFBFE5D5), Color(0xFFF7FFFB), Color(0xFF218C72))),
-    ThemeOption(AppTheme.Lavender, "淡紫玻璃", "薰衣草光晕 · 紫罗兰强调", listOf(Color(0xFFD8C8EE), Color(0xFFFBF9FF), Color(0xFF7659AD))),
-    ThemeOption(AppTheme.Night, "深海玻璃", "墨蓝夜色 · 浅蓝高亮", listOf(Color(0xFF10243A), Color(0xFF193551), Color(0xFF76C2ED)))
+    ThemeOption(AppTheme.Lavender, "淡紫玻璃", "熏衣草光晕 · 紫罗兰强调", listOf(Color(0xFFD8C8EE), Color(0xFFFBF9FF), Color(0xFF7659AD))),
+    ThemeOption(AppTheme.Night, "深海玻璃", "墓蓝夜色 · 浅蓝高亮", listOf(Color(0xFF10243A), Color(0xFF193551), Color(0xFF76C2ED)))
 )
 
 @Composable
@@ -220,7 +220,7 @@ fun MoreScreen(
             text = {
                 Text(
                     when (dataConfirm) {
-                        "清理临时文件" -> "仅清除原型中的临时文件标记，不会触碰设备文件。"
+                        "清理临时文件" -> "仅清除原型中的临时文件标记，不会触砹设备文件。"
                         "清空下载历史" -> "仅隐藏已完成、失败或取消的任务记录；不会删除媒体文件。"
                         else -> "仅恢复原型中的下载偏好；不会影响文件或设备设置。"
                     }
@@ -311,6 +311,7 @@ private fun SectionCard(title: String?, content: @Composable ColumnScope.() -> U
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DownloadPrefsPage(
     defaultType: String, videoQuality: String, audioFormat: String,
@@ -377,31 +378,37 @@ private fun DownloadPrefsPage(
         }
         Spacer(Modifier.height(24.dp))
     }
+
+    // Pref picker as ModalBottomSheet — matches React prototype prefPicker style
     if (localPrefPicker != null) {
-        AlertDialog(
-            onDismissRequest = { localPrefPicker = null },
-            title = { Text(localPrefPicker!!) },
-            text = {
-                Column {
-                    val options = when (localPrefPicker) {
-                        "默认视频质量" -> listOf("推荐", "高清", "省空间")
-                        "默认音频格式" -> listOf("原始音频", "MP3", "M4A")
-                        else -> listOf("仅 Wi-Fi", "任意网络")
-                    }
-                    options.forEach { opt ->
-                        TextButton(onClick = {
+        ModalBottomSheet(onDismissRequest = { localPrefPicker = null }) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
+                Text(localPrefPicker!!, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+                Spacer(Modifier.height(16.dp))
+                val options = when (localPrefPicker) {
+                    "默认视频质量" -> listOf("推荐", "高清", "省空间")
+                    "默认音频格式" -> listOf("原始音频", "MP3", "M4A")
+                    else -> listOf("仅 Wi-Fi", "任意网络")
+                }
+                options.forEach { opt ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clickable {
                             when (localPrefPicker) {
                                 "默认视频质量" -> onVideoQuality(opt)
                                 "默认音频格式" -> onAudioFormat(opt)
                                 else -> onNetworkPref(opt)
                             }
                             localPrefPicker = null
-                        }, modifier = Modifier.fillMaxWidth()) { Text(opt) }
+                        },
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(0.dp)
+                    ) {
+                        Text(opt, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp))
                     }
                 }
-            },
-            confirmButton = { TextButton(onClick = { localPrefPicker = null }) { Text("取消") } }
-        )
+            }
+        }
     }
 }
 

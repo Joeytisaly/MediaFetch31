@@ -3,8 +3,6 @@ package com.tcpg007014.tcpgyt.ui.shell
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,7 +53,7 @@ fun TcpgytApp() {
                 when (tab) {
                     Destination.Tasks -> TasksScreen(screenPadding, onSnack)
                     Destination.Files -> FilesScreen(screenPadding, onSnack)
-                    Destination.More -> MoreScreen(
+                    Destination.More  -> MoreScreen(
                         padding = screenPadding,
                         current = savedTheme,
                         onSnack = onSnack
@@ -91,16 +89,20 @@ private fun FloatingNavBar(
     val primaryColor = MaterialTheme.colorScheme.primary
     val mutedColor = MaterialTheme.colorScheme.onSurfaceVariant
 
+    // 74% width + SpaceBetween mirrors the React prototype nav layout
     Surface(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(0.74f),
         shape = CircleShape,
         color = pillColor,
         tonalElevation = 0.dp,
         shadowElevation = 14.dp
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Destination.entries.forEach { dest ->
                 val selected = currentTab == dest
@@ -118,7 +120,7 @@ private fun FloatingNavBar(
                         Icon(
                             imageVector = when (dest) {
                                 Destination.Tasks -> TcpgytIcons.Tasks
-                                Destination.Files -> Icons.Outlined.Link
+                                Destination.Files -> TcpgytIcons.Files
                                 Destination.More  -> TcpgytIcons.More
                             },
                             contentDescription = dest.label,

@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,12 +24,22 @@ import androidx.compose.ui.unit.sp
 private enum class ParseState { Idle, Loading, Result, Error }
 private enum class TaskStatus { Queued, Downloading, Paused, Done, Failed, Cancelled }
 
+private fun statusLabel(status: TaskStatus) = when (status) {
+    TaskStatus.Downloading -> "下载中"
+    TaskStatus.Paused      -> "已暂停"
+    TaskStatus.Queued      -> "排队中"
+    TaskStatus.Done        -> "已完成"
+    TaskStatus.Failed      -> "下载失败"
+    TaskStatus.Cancelled   -> "已取消"
+}
+
 private data class DemoTask(
     val id: Int,
     val title: String,
     val format: String,
     val status: TaskStatus,
-    val progress: Float
+    val progress: Float,
+    val completedAt: String = ""
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,13 +52,16 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
     var filterSheet by remember { mutableStateOf(false) }
     var activeFilter by remember { mutableStateOf("进行中") }
     var selectedTaskId by remember { mutableStateOf<Int?>(null) }
+    var fileOpsTaskId by remember { mutableStateOf<Int?>(null) }
+    val clipboard = LocalClipboardManager.current
+
     var tasks by remember {
         mutableStateOf(
             listOf(
                 DemoTask(1, "城市夜行", "视频 · 72%", TaskStatus.Downloading, 0.72f),
                 DemoTask(2, "雨天书店", "MP3 · 320 kbps", TaskStatus.Paused, 0.48f),
                 DemoTask(3, "河岸片段", "MP4 · 720P", TaskStatus.Queued, 0f),
-                DemoTask(4, "周末散步", "M4A · 128 kbps", TaskStatus.Done, 1f),
+                DemoTask(4, "周末散步", "M4A · 128 kbps", TaskStatus.Done, 1f, completedAt = "2026-07-30 14:20"),
                 DemoTask(5, "海岸线片段", "720P · MP4", TaskStatus.Failed, 0f)
             )
         )
@@ -87,17 +102,13 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         Text("下载", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Black)
         Spacer(Modifier.height(16.dp))
 
-        // Single-row input card
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.65f)),
             shape = RoundedCornerShape(26.dp),
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
-            Row(
-                Modifier.fillMaxWidth().padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     Modifier.size(48.dp).clip(RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
@@ -107,17 +118,11 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                     onValueChange = { link = it; state = ParseState.Idle },
                     modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
                     singleLine = true,
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold
-                    ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontWeight = FontWeight.SemiBold),
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     decorationBox = { inner ->
                         Box {
-                            if (link.isEmpty()) {
-                                Text("粘贴链接", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
-                            }
+                            if (link.isEmpty()) Text("粘贴链接", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                             inner()
                         }
                     }
@@ -126,10 +131,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                     Modifier
                         .size(48.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(
-                            if (link.isNotBlank() && state != ParseState.Loading) MaterialTheme.colorScheme.primaryContainer
-                            else Color.Transparent
-                        )
+                        .background(if (link.isNotBlank() && state != ParseState.Loading) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
                         .clickable(enabled = link.isNotBlank() && state != ParseState.Loading) { state = ParseState.Loading },
                     contentAlignment = Alignment.Center
                 ) {
@@ -141,7 +143,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 }
             }
         }
-        if (!link.isBlank() || state != ParseState.Idle) {
+        if (link.isNotBlank() || state != ParseState.Idle) {
             Text(
                 if (link.isBlank()) "粘贴你有权访问的资源链接" else "链接将进入本地原型准备流程",
                 style = MaterialTheme.typography.labelSmall,
@@ -188,8 +190,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                         Button(
                             onClick = {
                                 tasks = listOf(DemoTask(tasks.size + 1, "旅行影像精选", selectedFormat, TaskStatus.Queued, 0f)) + tasks
-                                state = ParseState.Idle; link = ""
-                                onSnack("已加入下载队列")
+                                state = ParseState.Idle; link = ""; onSnack("已加入下载队列")
                             },
                             modifier = Modifier.weight(1f)
                         ) { Text("添加到队列") }
@@ -200,12 +201,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
 
         Spacer(Modifier.height(20.dp))
 
-        // Section header + filter pill
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text("任务", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
             Surface(
                 onClick = { filterSheet = true },
@@ -219,9 +215,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 ) {
                     Text("筛选", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(activeFilter, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                    Box(
-                        Modifier.clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.primaryContainer).padding(horizontal = 6.dp, vertical = 2.dp)
-                    ) {
+                    Box(Modifier.clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.primaryContainer).padding(horizontal = 6.dp, vertical = 2.dp)) {
                         Text("${filterCounts[activeFilter] ?: 0}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                     Text("›", color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -241,10 +235,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 }
             }
         } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(bottom = 16.dp)) {
                 items(shown, key = { it.id }) { task ->
                     TaskCard(
                         task = task,
@@ -253,9 +244,9 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                             tasks = tasks.map { t ->
                                 if (t.id != task.id) t
                                 else when (action) {
-                                    "pause"  -> t.copy(status = TaskStatus.Paused)
+                                    "pause"          -> t.copy(status = TaskStatus.Paused)
                                     "resume", "retry" -> t.copy(status = TaskStatus.Downloading)
-                                    "cancel" -> t.copy(status = TaskStatus.Cancelled)
+                                    "cancel"         -> t.copy(status = TaskStatus.Cancelled)
                                     else -> t
                                 }
                             }
@@ -277,28 +268,41 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         FormatSheet(current = selectedFormat, onSelect = { selectedFormat = it; formatSheet = false }, onDismiss = { formatSheet = false })
     }
     if (filterSheet) {
-        FilterSheet(active = activeFilter, counts = filterCounts, onSelect = { activeFilter = it; filterSheet = false }, onDismiss = { filterSheet = false })
+        FilterSheet(
+            active = activeFilter,
+            counts = filterCounts,
+            shown = shown,
+            onSelect = { activeFilter = it; filterSheet = false },
+            onSelectTask = { id -> filterSheet = false; selectedTaskId = id },
+            onDismiss = { filterSheet = false }
+        )
     }
+
     selectedTaskId?.let { id ->
         tasks.find { it.id == id }?.let { task ->
             TaskDetailSheet(
                 task = task,
                 onDismiss = { selectedTaskId = null },
                 onSimulateDone = {
-                    tasks = tasks.map { if (it.id == id) it.copy(status = TaskStatus.Done, progress = 1f) else it }
+                    tasks = tasks.map { if (it.id == id) it.copy(status = TaskStatus.Done, progress = 1f, completedAt = "2026-07-31") else it }
                     selectedTaskId = null; onSnack("原型任务已模拟完成")
                 },
                 onSimulateFail = {
                     tasks = tasks.map { if (it.id == id) it.copy(status = TaskStatus.Failed) else it }
                     selectedTaskId = null; onSnack("原型任务已模拟失败")
                 },
+                onFileOps = { fileOpsTaskId = task.id; selectedTaskId = null },
+                onCopyTitle = {
+                    clipboard.setText(AnnotatedString(task.title))
+                    selectedTaskId = null; onSnack("已复制标题")
+                },
                 onAction = { action ->
                     tasks = tasks.map { t ->
                         if (t.id != id) t
                         else when (action) {
-                            "pause"  -> t.copy(status = TaskStatus.Paused)
+                            "pause"          -> t.copy(status = TaskStatus.Paused)
                             "resume", "retry" -> t.copy(status = TaskStatus.Downloading)
-                            "cancel" -> t.copy(status = TaskStatus.Cancelled)
+                            "cancel"         -> t.copy(status = TaskStatus.Cancelled)
                             else -> t
                         }
                     }
@@ -306,6 +310,33 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                     if (action == "open") onSnack("正在打开原型文件") else onSnack("已更新原型任务状态")
                 }
             )
+        }
+    }
+
+    // File ops sheet triggered from TaskDetail "文件操作" button
+    fileOpsTaskId?.let { id ->
+        tasks.find { it.id == id }?.let { task ->
+            ModalBottomSheet(onDismissRequest = { fileOpsTaskId = null }) {
+                Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
+                    Text(task.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(task.format, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(16.dp))
+                    listOf(
+                        "📄  打开文件" to { fileOpsTaskId = null; onSnack("正在打开原型文件") },
+                        "📂  查看位置" to { fileOpsTaskId = null; onSnack("Download / TCPGYT（原型位置）") },
+                        "🗑️  移除记录" to { tasks = tasks.filter { it.id != id }; fileOpsTaskId = null; onSnack("已移除任务记录") }
+                    ).forEach { (label, action) ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clickable { action() },
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = CardDefaults.cardElevation(0.dp)
+                        ) {
+                            Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp))
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -330,11 +361,6 @@ private fun TaskCard(task: DemoTask, onClick: () -> Unit, onAction: (String) -> 
         TaskStatus.Cancelled -> MaterialTheme.colorScheme.onSurfaceVariant
         else                 -> MaterialTheme.colorScheme.primary
     }
-    val statusLabel = when (task.status) {
-        TaskStatus.Downloading -> "下载中"; TaskStatus.Paused -> "已暂停"
-        TaskStatus.Queued -> "排队中"; TaskStatus.Done -> "已完成"
-        TaskStatus.Failed -> "下载失败"; TaskStatus.Cancelled -> "已取消"
-    }
     val actionLabel = when (task.status) {
         TaskStatus.Downloading -> "暂停"; TaskStatus.Paused -> "继续"
         TaskStatus.Queued -> "取消"; TaskStatus.Done -> "详情"
@@ -355,10 +381,9 @@ private fun TaskCard(task: DemoTask, onClick: () -> Unit, onAction: (String) -> 
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    Modifier.size(56.dp).clip(RoundedCornerShape(16.dp)).background(iconBg),
-                    contentAlignment = Alignment.Center
-                ) { Text(iconChar, style = MaterialTheme.typography.titleLarge, color = iconTint, fontWeight = FontWeight.Bold) }
+                Box(Modifier.size(56.dp).clip(RoundedCornerShape(16.dp)).background(iconBg), contentAlignment = Alignment.Center) {
+                    Text(iconChar, style = MaterialTheme.typography.titleLarge, color = iconTint, fontWeight = FontWeight.Bold)
+                }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(task.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
@@ -385,7 +410,7 @@ private fun TaskCard(task: DemoTask, onClick: () -> Unit, onAction: (String) -> 
                     }
                 ) {
                     Text(
-                        statusLabel,
+                        statusLabel(task.status),
                         style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold,
                         color = when (task.status) {
                             TaskStatus.Done   -> Color(0xFF5B9A77)
@@ -412,7 +437,14 @@ private fun TaskCard(task: DemoTask, onClick: () -> Unit, onAction: (String) -> 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FilterSheet(active: String, counts: Map<String, Int>, onSelect: (String) -> Unit, onDismiss: () -> Unit) {
+private fun FilterSheet(
+    active: String,
+    counts: Map<String, Int>,
+    shown: List<DemoTask>,
+    onSelect: (String) -> Unit,
+    onSelectTask: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
     val options = listOf(
         Triple("进行中", "↓", "排队中、下载中、已暂停"),
         Triple("已完成", "✓", "已加入文件库"),
@@ -426,7 +458,7 @@ private fun FilterSheet(active: String, counts: Map<String, Int>, onSelect: (Str
             Spacer(Modifier.height(16.dp))
             options.chunked(2).forEach { row ->
                 Row(Modifier.fillMaxWidth().padding(bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    row.forEach { (name, icon, detail) ->
+                    row.forEach { (name, icon, _) ->
                         val selected = active == name
                         Card(
                             modifier = Modifier.weight(1f).clickable { onSelect(name) },
@@ -453,6 +485,41 @@ private fun FilterSheet(active: String, counts: Map<String, Int>, onSelect: (Str
                     }
                 }
             }
+
+            // 当前结果 preview section
+            Spacer(Modifier.height(8.dp))
+            HorizontalDivider(color = Color.White.copy(alpha = 0.5f), thickness = 0.5.dp)
+            Spacer(Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Text("当前结果", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("$active · ${shown.size} 项", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Spacer(Modifier.height(8.dp))
+            if (shown.isEmpty()) {
+                Box(
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)).padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("没有匹配的任务", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            } else {
+                shown.forEach { task ->
+                    Surface(
+                        onClick = { onSelectTask(task.id) },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 11.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(task.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                            Text(statusLabel(task.status), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -464,14 +531,12 @@ private fun TaskDetailSheet(
     onDismiss: () -> Unit,
     onSimulateDone: () -> Unit,
     onSimulateFail: () -> Unit,
+    onFileOps: (() -> Unit)? = null,
+    onCopyTitle: (() -> Unit)? = null,
     onAction: (String) -> Unit
 ) {
     val active = task.status == TaskStatus.Downloading || task.status == TaskStatus.Paused
     val ext = when { "MP3" in task.format -> "mp3"; "M4A" in task.format || "音频" in task.format -> "m4a"; "WebM" in task.format -> "webm"; else -> "mp4" }
-    val statusText = when (task.status) {
-        TaskStatus.Downloading -> "下载中"; TaskStatus.Paused -> "已暂停"; TaskStatus.Queued -> "排队中"
-        TaskStatus.Done -> "已完成"; TaskStatus.Failed -> "下载失败"; TaskStatus.Cancelled -> "已取消"
-    }
     val primaryAction = when (task.status) {
         TaskStatus.Downloading -> "暂停下载"; TaskStatus.Paused -> "继续下载"
         TaskStatus.Failed -> "重试下载"; TaskStatus.Done -> "打开文件"
@@ -488,7 +553,7 @@ private fun TaskDetailSheet(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
                 Column(Modifier.weight(1f)) {
                     Text(task.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
-                    Text(statusText, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(statusLabel(task.status), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 TextButton(onClick = onDismiss) { Text("关闭") }
             }
@@ -516,19 +581,54 @@ private fun TaskDetailSheet(
                 Spacer(Modifier.height(10.dp))
             }
 
-            DetailSection("文件") {
-                listOf("格式" to task.format, "模拟文件名" to "${task.title}.$ext", "保存位置" to "Download / TCPGYT").forEachIndexed { i, (label, value) ->
-                    Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+            // 文件 section with 复制标题 + 完成时间
+            Text("文件", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
+            Card(
+                Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
+                shape = RoundedCornerShape(18.dp), elevation = CardDefaults.cardElevation(0.dp)
+            ) {
+                Column {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { onCopyTitle?.invoke() }
+                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("复制标题", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                        Text(task.title, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
-                    if (i < 2) HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+
+                    val fileRows = buildList {
+                        add("格式" to task.format)
+                        add("模拟文件名" to "${task.title}.$ext")
+                        add("保存位置" to "Download / TCPGYT")
+                        if (task.status == TaskStatus.Done && task.completedAt.isNotEmpty()) {
+                            add("完成时间" to task.completedAt)
+                        }
+                    }
+                    fileRows.forEachIndexed { i, (label, value) ->
+                        Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+                        }
+                        if (i < fileRows.size - 1) HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+                    }
                 }
             }
 
             Spacer(Modifier.height(10.dp))
 
-            DetailSection("来源") {
+            // 来源 section
+            Text("来源", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
+            Card(
+                Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
+                shape = RoundedCornerShape(18.dp), elevation = CardDefaults.cardElevation(0.dp)
+            ) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("平台", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text("示例媒体平台", style = MaterialTheme.typography.bodyMedium)
@@ -552,20 +652,17 @@ private fun TaskDetailSheet(
                     OutlinedButton(onClick = onSimulateFail, modifier = Modifier.weight(1f)) { Text("模拟失败") }
                 }
             }
+
+            if (task.status == TaskStatus.Done && onFileOps != null) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = onFileOps,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(18.dp)
+                ) { Text("文件操作", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold) }
+            }
         }
     }
-}
-
-@Composable
-private fun DetailSection(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Text(title, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
-    Card(
-        Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
-        shape = RoundedCornerShape(18.dp),
-        elevation = CardDefaults.cardElevation(0.dp),
-        content = content
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
