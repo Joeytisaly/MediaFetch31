@@ -686,7 +686,7 @@ private fun AboutPage() {
         SectionCard("应用信息") {
             listOf(
                 "开发者" to "TCPG007014 (YaR)",
-                "联系邮筒" to "ChengYuan.tcpg@gnail.com",
+                "联系邮笱" to "ChengYuan.tcpg@gnail.com",
                 "包名" to "com.tcpg007014.tcpgyt",
                 "隐私" to "数据仅保存在本机"
             ).forEachIndexed { i, (label, value) ->
@@ -710,7 +710,7 @@ private fun AboutPage() {
                 Text("ℹ️", style = MaterialTheme.typography.titleLarge)
                 Column {
                     Text("支持开发暂未开放", style = MaterialTheme.typography.titleSmall)
-                    Text("尚未配置捐赠信息，因此不会显示链接或跳转入口。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("尚未配置捐贈信息，因此不会显示链接或跳转入口。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }

@@ -8,15 +8,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
-enum class AppTheme(val label: String) { Blush("淡粉"), Blue("淡蓝"), Mint("薄荷"), Lavender("薰衣草"), Night("深色") }
+enum class AppTheme(val label: String) { Blush("淡粉"), Blue("淡蓝"), Mint("薄荷"), Lavender("熏衣草"), Night("深色") }
 
+// top/bot = base linear gradient; s1/s2 = radial color-cloud fills
+// s1 and s2 must be noticeably more saturated than top/bot so clouds are visible
 private data class GradColors(val top: Color, val bot: Color, val s1: Color, val s2: Color)
 
 private fun gradColors(theme: AppTheme) = when (theme) {
-    AppTheme.Blush    -> GradColors(Color(0xFFF5BBC6), Color(0xFFFFF9F8), Color(0xFFF3B8C4), Color(0xFFF4BBC6))
-    AppTheme.Blue     -> GradColors(Color(0xFFB6D8EE), Color(0xFFF5FAFF), Color(0xFFB3D8F0), Color(0xFFBDD9EF))
-    AppTheme.Mint     -> GradColors(Color(0xFFB9E2D1), Color(0xFFF4FCF8), Color(0xFFB5E0CE), Color(0xFFC3E8D8))
-    AppTheme.Lavender -> GradColors(Color(0xFFD5C4EC), Color(0xFFFAF8FF), Color(0xFFD0BEEA), Color(0xFFDBCAEF))
+    AppTheme.Blush    -> GradColors(Color(0xFFF5BBC6), Color(0xFFFFF9F8), Color(0xFFE8768E), Color(0xFFF09AB8))
+    AppTheme.Blue     -> GradColors(Color(0xFFB6D8EE), Color(0xFFF5FAFF), Color(0xFF78B8E0), Color(0xFF9ACCE8))
+    AppTheme.Mint     -> GradColors(Color(0xFFB9E2D1), Color(0xFFF4FCF8), Color(0xFF68C4AA), Color(0xFF90D8C0))
+    AppTheme.Lavender -> GradColors(Color(0xFFD5C4EC), Color(0xFFFAF8FF), Color(0xFFA688D4), Color(0xFFBEAEE8))
     AppTheme.Night    -> GradColors(Color(0xFF102A42), Color(0xFF081827), Color(0xFF1C3858), Color(0xFF0E2438))
 }
 
@@ -24,6 +26,7 @@ private fun gradColors(theme: AppTheme) = when (theme) {
  * Multi-layer radial + linear gradient matching the React prototype canvas.
  * Layers: base vertical gradient, upper-left color cloud, lower-right color cloud,
  * upper-right white glow — mirrors CSS radial-gradient stack at 17%/25%, 68%/68%, 80%/28%.
+ * Cloud colors (s1/s2) are deliberately more saturated than the base so they are visible.
  */
 fun DrawScope.drawThemeBackground(theme: AppTheme) {
     val c = gradColors(theme)
@@ -34,13 +37,13 @@ fun DrawScope.drawThemeBackground(theme: AppTheme) {
     )
 
     if (theme == AppTheme.Night) {
-        // Night: single subtle cool accent glow, no color clouds
+        // Night: single cool accent glow in upper area
         val hx = size.width * 0.75f
         val hy = size.height * 0.15f
-        val hr = size.width * 0.55f
+        val hr = size.width * 0.60f
         drawCircle(
             brush = Brush.radialGradient(
-                listOf(Color(0xFF76C2ED).copy(alpha = 0.07f), Color.Transparent),
+                listOf(Color(0xFF76C2ED).copy(alpha = 0.14f), Color.Transparent),
                 Offset(hx, hy), hr
             ),
             radius = hr, center = Offset(hx, hy)
@@ -50,26 +53,26 @@ fun DrawScope.drawThemeBackground(theme: AppTheme) {
 
     // 2. Large color cloud — upper-left (matches React: circle at 17% 25%)
     val s1 = Offset(size.width * 0.17f, size.height * 0.25f)
-    val r1 = size.width * 0.65f
+    val r1 = size.width * 0.70f
     drawCircle(
-        brush = Brush.radialGradient(listOf(c.s1.copy(alpha = 0.62f), Color.Transparent), s1, r1),
+        brush = Brush.radialGradient(listOf(c.s1.copy(alpha = 0.80f), Color.Transparent), s1, r1),
         radius = r1, center = s1
     )
 
     // 3. Secondary cloud — lower center-right (matches React: circle at 68% 68%)
     val s2 = Offset(size.width * 0.68f, size.height * 0.68f)
-    val r2 = size.width * 0.55f
+    val r2 = size.width * 0.58f
     drawCircle(
-        brush = Brush.radialGradient(listOf(c.s2.copy(alpha = 0.42f), Color.Transparent), s2, r2),
+        brush = Brush.radialGradient(listOf(c.s2.copy(alpha = 0.60f), Color.Transparent), s2, r2),
         radius = r2, center = s2
     )
 
     // 4. White glow — upper-right (matches React: circle at 80% 28%)
     val sh = Offset(size.width * 0.80f, size.height * 0.28f)
-    val rh = size.width * 0.32f
+    val rh = size.width * 0.34f
     drawCircle(
-        brush = Brush.radialGradient(listOf(Color.White.copy(alpha = 0.82f), Color.Transparent), sh, rh),
-        radius = rh, center = sh
+        brush = Brush.radialGradient(listOf(Color.White.copy(alpha = 0.90f), Color.Transparent), sh, rh),
+        radius = rh, center = Offset(size.width * 0.80f, size.height * 0.28f)
     )
 }
 
