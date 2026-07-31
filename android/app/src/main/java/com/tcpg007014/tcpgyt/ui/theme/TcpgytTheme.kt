@@ -10,23 +10,25 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 
 enum class AppTheme(val label: String) { Blush("淡粉"), Blue("淡蓝"), Mint("薄荷"), Lavender("熏衣草"), Night("深色") }
 
-// top/bot = base linear gradient; s1/s2 = radial color-cloud fills
-// s1 and s2 must be noticeably more saturated than top/bot so clouds are visible
+// top/bot = base linear gradient; s1/s2 = radial color-cloud fills.
+// s1/s2 mirror the React canvas --tcp-canvas radial stops (17%/25% and 68%/68%).
+// Keep them LIGHT (not more saturated than the base) so the upper-left corner reads
+// as soft as the prototype and never appears darker than the canvas.
 private data class GradColors(val top: Color, val bot: Color, val s1: Color, val s2: Color)
 
 private fun gradColors(theme: AppTheme) = when (theme) {
-    AppTheme.Blush    -> GradColors(Color(0xFFF5BBC6), Color(0xFFFFF9F8), Color(0xFFE8768E), Color(0xFFF09AB8))
-    AppTheme.Blue     -> GradColors(Color(0xFFB6D8EE), Color(0xFFF5FAFF), Color(0xFF78B8E0), Color(0xFF9ACCE8))
-    AppTheme.Mint     -> GradColors(Color(0xFFB9E2D1), Color(0xFFF4FCF8), Color(0xFF68C4AA), Color(0xFF90D8C0))
-    AppTheme.Lavender -> GradColors(Color(0xFFD5C4EC), Color(0xFFFAF8FF), Color(0xFFA688D4), Color(0xFFBEAEE8))
-    AppTheme.Night    -> GradColors(Color(0xFF102A42), Color(0xFF081827), Color(0xFF1C3858), Color(0xFF0E2438))
+    AppTheme.Blush    -> GradColors(Color(0xFFF5BBC6), Color(0xFFFFF9F8), Color(0xFFF3B8C4), Color(0xFFF4BBC6))
+    AppTheme.Blue     -> GradColors(Color(0xFFB6D8EE), Color(0xFFF5FAFF), Color(0xFFB9D9EE), Color(0xFFC4E3F4))
+    AppTheme.Mint     -> GradColors(Color(0xFFB9E2D1), Color(0xFFF4FCF8), Color(0xFFBFE5D5), Color(0xFFCFEEE0))
+    AppTheme.Lavender -> GradColors(Color(0xFFD5C4EC), Color(0xFFFAF8FF), Color(0xFFD8C8EE), Color(0xFFE4D9F5))
+    AppTheme.Night    -> GradColors(Color(0xFF102A42), Color(0xFF081827), Color(0xFF1B4261), Color(0xFF102E49))
 }
 
 /**
  * Multi-layer radial + linear gradient matching the React prototype canvas.
  * Layers: base vertical gradient, upper-left color cloud, lower-right color cloud,
  * upper-right white glow — mirrors CSS radial-gradient stack at 17%/25%, 68%/68%, 80%/28%.
- * Cloud colors (s1/s2) are deliberately more saturated than the base so they are visible.
+ * Cloud colors (s1/s2) are the same light hues as the canvas so no corner reads darker.
  */
 fun DrawScope.drawThemeBackground(theme: AppTheme) {
     val c = gradColors(theme)
