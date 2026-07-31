@@ -3,8 +3,10 @@ package com.tcpg007014.tcpgyt.ui.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -14,14 +16,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
+import com.tcpg007014.tcpgyt.ui.theme.themePrimarySoft
 import com.tcpg007014.tcpgyt.ui.theme.themeSectionLabel
 
 /**
@@ -85,6 +90,25 @@ fun SheetSection(
             }
             HorizontalDivider(color = Color.White.copy(alpha = 0.7f), thickness = 0.5.dp)
             content()
+        }
+    }
+}
+
+/**
+ * 画布风格的弹窗关闭按钮：圆形浅色底(primary-soft) + 主色 ×。全局共享，
+ * 供各详情/筛选弹层统一使用，避免各页各写一份。
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SheetCloseButton(onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        color = themePrimarySoft(LocalAppTheme.current),
+        modifier = Modifier.size(36.dp)
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("×", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
         }
     }
 }

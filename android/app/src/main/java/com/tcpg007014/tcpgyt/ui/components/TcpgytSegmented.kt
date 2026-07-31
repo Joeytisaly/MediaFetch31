@@ -1,10 +1,10 @@
 package com.tcpg007014.tcpgyt.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
 import com.tcpg007014.tcpgyt.ui.theme.themePrimaryMuted
@@ -25,6 +26,7 @@ import com.tcpg007014.tcpgyt.ui.theme.themeSectionLabel
  * 画布统一分段控件 —— 对照 React `bg-[var(--tcp-primary-muted)]` 底槽 +
  * 选中项白底 + 主色文字 + 轻阴影，且所有 tab 文本 font-black。
  * 用于文件筛选、下载偏好·默认类型等全部 segmented control，避免各处配色漂移。
+ * 每个 tab 用 Box 居中，确保文字在药丸内横/纵向都居中、不显得偏上或过厚。
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,15 +53,20 @@ fun TcpgytSegmented(
                 color = if (isSelected) Color.White else Color.Transparent,
                 shadowElevation = if (isSelected) 1.dp else 0.dp
             ) {
-                Text(
-                    label,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Black,
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else themeSectionLabel(theme),
-                    modifier = Modifier
-                        .padding(vertical = 9.dp)
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                )
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else themeSectionLabel(theme)
+                    )
+                }
             }
         }
     }

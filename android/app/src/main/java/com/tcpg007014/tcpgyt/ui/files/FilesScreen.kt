@@ -13,13 +13,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.tcpg007014.tcpgyt.ui.components.SheetCloseButton
 import com.tcpg007014.tcpgyt.ui.components.SheetSection
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
 import com.tcpg007014.tcpgyt.ui.components.TcpgytSegmented
 import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
+import com.tcpg007014.tcpgyt.ui.theme.themePrimaryPale
 import com.tcpg007014.tcpgyt.ui.theme.themePrimarySoft
+import com.tcpg007014.tcpgyt.ui.theme.themePrimaryWash
 
 private data class DemoFile(
     val id: Int,
@@ -124,10 +128,11 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // 搜索框文件夹图标 —— 对齐画布：主色线条 Folder + primary-soft 浅底（同保存位置）
                 Box(
-                    Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.8f)),
+                    Modifier.size(36.dp).clip(RoundedCornerShape(12.dp)).background(themePrimarySoft(LocalAppTheme.current)),
                     contentAlignment = Alignment.Center
-                ) { Icon(TcpgytIcons.FolderSolid, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color.Unspecified) }
+                ) { Icon(TcpgytIcons.Folder, contentDescription = null, modifier = Modifier.size(19.dp), tint = MaterialTheme.colorScheme.primary) }
                 Spacer(Modifier.width(8.dp))
                 TextField(
                     value = query,
@@ -201,7 +206,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         }
     }
 
-    // File detail sheet — matches React prototype completed-task detail
+    // 文件详情弹层 —— 对齐画布已完成任务详情
     detailTarget?.let { file ->
         val displayName = file.name.substringBeforeLast(".")
         TcpgytBottomSheet(onDismiss = { detailTarget = null }) {
@@ -216,7 +221,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                         Text(displayName, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
                         Text("已完成", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    TextButton(onClick = { detailTarget = null }) { Text("关闭") }
+                    SheetCloseButton { detailTarget = null }
                 }
                 Spacer(Modifier.height(14.dp))
 
@@ -287,71 +292,95 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
 
                 Spacer(Modifier.height(16.dp))
 
-                Button(
+                // 打开文件 —— 画布：primary-wash 浅底 + 主色字（非实心主色）
+                Surface(
                     onClick = { detailTarget = null; onSnack("正在打开原型文件") },
                     modifier = Modifier.fillMaxWidth().height(52.dp),
-                    shape = RoundedCornerShape(18.dp)
+                    shape = RoundedCornerShape(18.dp),
+                    color = themePrimaryWash(LocalAppTheme.current)
                 ) {
-                    Text("打开文件", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("打开文件", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary)
+                    }
                 }
                 Spacer(Modifier.height(8.dp))
-                OutlinedButton(
+                // 文件操作 —— 画布：neutral-action 浅灰底
+                Surface(
                     onClick = { menuTarget = file; detailTarget = null },
                     modifier = Modifier.fillMaxWidth().height(48.dp),
-                    shape = RoundedCornerShape(18.dp)
+                    shape = RoundedCornerShape(18.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
-                    Text("文件操作", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("文件操作", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
     }
 
-    // File operations bottom sheet
+    // 文件操作弹层 —— 对齐画布：无标题头，纯文字行
     menuTarget?.let { file ->
         TcpgytBottomSheet(onDismiss = { menuTarget = null }) {
-            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
-                Text(file.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text("${file.type} · ${file.meta}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Spacer(Modifier.height(16.dp))
+            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(top = 4.dp, bottom = 32.dp)) {
                 listOf(
                     "打开文件" to { menuTarget = null; onSnack("正在打开原型文件") },
                     "查看位置" to { menuTarget = null; onSnack("Download / TCPGYT（原型位置）") },
                     "移除记录" to { files = files.filter { it.id != file.id }; menuTarget = null; onSnack("已移除任务记录") }
                 ).forEach { (label, action) ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clickable { action() },
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(0.dp)
+                    Surface(
+                        onClick = action,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                        shape = RoundedCornerShape(18.dp),
+                        color = themePrimaryPale(LocalAppTheme.current)
                     ) {
-                        Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp))
+                        Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp))
                     }
                 }
-                Card(
-                    modifier = Modifier.fillMaxWidth().clickable { menuTarget = null; deleteTarget = file },
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(0.dp)
+                Surface(
+                    onClick = { menuTarget = null; deleteTarget = file },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    color = themePrimarySoft(LocalAppTheme.current)
                 ) {
-                    Text("删除原型文件", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp))
+                    Text("删除原型文件", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp))
                 }
             }
         }
     }
 
+    // 删除确认 —— 对齐画布：底部弹层（非 AlertDialog）
     deleteTarget?.let { file ->
-        AlertDialog(
-            onDismissRequest = { deleteTarget = null },
-            title = { Text("删除这个文件？") },
-            text = { Text("这只是原型演示：将从文件库模拟列表移除，不会触碰设备文件。") },
-            confirmButton = {
-                TextButton(onClick = {
-                    files = files.filter { it.id != file.id }
-                    deleteTarget = null; onSnack("已从原型文件库移除")
-                }) { Text("删除", color = MaterialTheme.colorScheme.error) }
-            },
-            dismissButton = { TextButton(onClick = { deleteTarget = null }) { Text("取消") } }
-        )
+        TcpgytBottomSheet(onDismiss = { deleteTarget = null }) {
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(top = 4.dp, bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("删除这个文件？", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "这只是原型演示：将从文件库模拟列表移除，不会触碰设备文件。",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(20.dp))
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Surface(
+                        onClick = { deleteTarget = null },
+                        modifier = Modifier.weight(1f).height(52.dp),
+                        shape = RoundedCornerShape(18.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    ) { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("取消", fontWeight = FontWeight.Black) } }
+                    Surface(
+                        onClick = { files = files.filter { it.id != file.id }; deleteTarget = null; onSnack("已从原型文件库移除") },
+                        modifier = Modifier.weight(1f).height(52.dp),
+                        shape = RoundedCornerShape(18.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    ) { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("删除", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Black) } }
+                }
+            }
+        }
     }
 }
 
@@ -365,13 +394,13 @@ private fun FileCard(file: DemoFile, onClick: () -> Unit) {
     ) {
         Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(Color(0xFFE8F5EC)),
+                Modifier.size(48.dp).clip(RoundedCornerShape(16.dp)).background(Color(0xFFE8F5EC)),
                 contentAlignment = Alignment.Center
-            ) { Icon(TcpgytIcons.Check, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color(0xFF5B9A77)) }
+            ) { Icon(TcpgytIcons.Check, contentDescription = null, modifier = Modifier.size(22.dp), tint = Color(0xFF7EBE9A)) }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(file.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
-                Text("${file.type} · ${file.meta}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(file.format, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Icon(TcpgytIcons.More, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
