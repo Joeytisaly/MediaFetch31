@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
 
 private enum class ParseState { Idle, Loading, Result, Error }
@@ -365,7 +366,7 @@ fun TasksScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
     // 文件操作弹层（来自任务详情「文件操作」）
     fileOpsTaskId?.let { id ->
         tasks.find { it.id == id }?.let { task ->
-            ModalBottomSheet(onDismissRequest = { fileOpsTaskId = null }) {
+            TcpgytBottomSheet(onDismiss = { fileOpsTaskId = null }) {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
                     Text(task.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Text(task.format, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -516,7 +517,7 @@ private fun FilterSheet(
         "下载失败" to TcpgytIcons.Info,
         "已取消" to TcpgytIcons.Power
     )
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    TcpgytBottomSheet(onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
                 Column {
@@ -617,7 +618,7 @@ private fun TaskDetailSheet(
         TaskStatus.Queued -> "cancel"; TaskStatus.Cancelled -> ""
     }
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    TcpgytBottomSheet(onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
                 Column(Modifier.weight(1f)) {
@@ -753,7 +754,7 @@ private fun FormatSheet(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
     val primary = MaterialTheme.colorScheme.primary
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    TcpgytBottomSheet(onDismiss = onDismiss) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
                 Column {
