@@ -28,7 +28,7 @@
 | 许可证 | **GPL-3.0** | 源码 `yausername/youtubedl-android/LICENSE` 逐条确认为 GNU GPL v3 |
 | 上游关系 | `yausername` 为原作者仓(git tag 最新到 0.18.1);`JunkFood02` fork 为 Maven 发布方(Seal 应用同源),两仓 git tag 存在滞后但 Maven 0.18.1 已发布 | 两仓 tag 列表对比 |
 
-**兼容依据**：AGP / Kotlin / Compose / JDK / min&target SDK 的精确兼容矩阵 **[待审批]**（工具链闸门核验:MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 能否承载 0.18.1）。
+**兼容依据**：**已核验**（见 `docs/09-toolchain-gate.md`）。library 为 AAR,`minSdk 24` / `compileSdk 34`;MediaFetch30 现状 AGP `9.1.0` / Kotlin `2.4.10` / Gradle `9.3.1` / `compileSdk 36` / `minSdk 24`。结论:`minSdk` 相等、`compileSdk 36 ≥ 34`、新 AGP/Kotlin 消费旧 AAR 向后兼容 —— **无需降级即可承载 0.18.1**。
 
 ### D-002 ffmpeg（youtubedl-android 附属,后处理/合流）
 
@@ -74,7 +74,7 @@
 
 ## 5. 本文件未决项（[待审批]，留待工具链闸门）
 
-1. D-001 与 MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 的官方兼容矩阵结论;必要时回退到兼容的 AGP/Kotlin/Compose/JDK/SDK 组合。
+1. ~~D-001 与 MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 的官方兼容矩阵结论~~ —— **已闭合**,结论见 `docs/09-toolchain-gate.md`(无需降级即可承载 0.18.1)。
 2. D-002 ffmpeg 的精确 Maven 发布版本 + FFmpeg 二进制许可(LGPL/GPL)与归属文件。
 3. Room / 协程 / DataStore / Security-crypto(Keystore)等 Phase E 支撑库的精确版本与许可(下批随架构落地登记)。
 4. 是否需要 yt-dlp 自更新机制(章程 §5 禁止自行二进制下载更新;如需,须新方案审批)。
@@ -83,4 +83,5 @@
 
 - 已核验事实:D-001 坐标 `io.github.junkfood02.youtubedl-android:library:0.18.1` 于 Maven Central 存在,许可证 GPL-3.0。
 - 未坐实项均标 [待审批],不构成引入批准。
-- **下一步**:进入「工具链版本审批闸门」,以官方兼容矩阵核验版本组合,再逐依赖申请加入 build(Phase E,先审后写)。
+- **工具链闸门已结论化**(见 `docs/09`):MediaFetch30 现有工具链无需降级即可承载 0.18.1。
+- **下一步**:进入 Phase E,逐依赖申请加入 build(先审后写);先 D-001 library,再核验 D-002 ffmpeg 精确版本与许可。
