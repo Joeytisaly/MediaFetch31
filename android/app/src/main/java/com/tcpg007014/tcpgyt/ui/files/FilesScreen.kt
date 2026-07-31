@@ -112,7 +112,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("📂", style = MaterialTheme.typography.displaySmall)
                     Spacer(Modifier.height(8.dp))
-                    Text(没有匹配的原型文件", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("没有匹配的原型文件", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (query.isNotEmpty() || filter != "全部") {
                         TextButton(onClick = { query = ""; filter = "全部" }) { Text("清除筛选") }
                     }
