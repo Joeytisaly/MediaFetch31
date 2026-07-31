@@ -1,15 +1,17 @@
 # TCPGYT 项目交接笔记 (PROGRESS)
 
 > 用途:对话被清理后,读取本文件即可恢复项目状态。每次有重要进展时更新本文件并推送 GitHub。
-> 最近更新:2026-07-31(**工具链闸门结论化**:新增 `docs/09-toolchain-gate.md` —— 已核验 MediaFetch30 现有 AGP 9.1 / Kotlin 2.4.10 / compileSdk 36 / minSdk 24 无需降级即可承载 `youtubedl-android` 0.18.1(AAR,minSdk 24/compileSdk 34);同步回填 `docs/03`。此前:Phase B 文档 `docs/03~08` 全部草案完成)
+> 最近更新:2026-07-31(**Phase E 启动**:① 交付管线打通 —— `android/` 工程已并入公开仓 `MediaFetch31`(monorepo),通道=工作区新增/改 android/ → Figma "Update files from Figma Make" 同步 → 远端 → 用户 `git pull`;② D-001 `youtubedl-android:library:0.18.1` 已入 build(4 ABI + `jniLibs.useLegacyPackaging`),`assembleDebug` 通过,原生 libpython/libqjs 已打包;③ 引擎适配层骨架落地:`android/app/src/main/java/com/tcpg007014/tcpgyt/engine/`(`DownloadEngine` 接口 + `EngineModels` + `YoutubeDlEngine` 适配),编译通过。此前:工具链闸门 docs/09 结论化、Phase B 文档 03~08 草案完成)
 
 ## 0. ⚠️ 仓库与阶段真相(2026-07-31 订正,防再被带偏)
 
 - **`MediaFetch31`(TypeScript,公开)= React 前端原型仓库**,与本地工作区完全同步(App.tsx/index.css/main.tsx blob SHA 一致)。构建环境依赖(package.json/pnpm-lock/vite)都在此。工作流:工作区改代码 → 推送 MediaFetch31 → 用户本地构建。
-- **`MediaFetch30`(Kotlin,私有)= Android 目标工程**,但**目前只有默认 Compose 脚手架**(仅 `MainActivity.kt` + `ui/theme/`,包名还是默认 `com.example.mediafetch`)。Phase E 一行业务代码都没有;根目录有个 `MediaFetch.zip` 来历不明。
+- **⚠️ 交付管线已改为 monorepo(2026-07-31,用户批准公开)**:Android 工程 `android/` 已并入公开仓 `MediaFetch31`,不再依赖私有 `MediaFetch30`。**唯一权威源 = 我的工作区**;Figma 全量镜像同步会删掉工作区里没有的东西(历史上 `264cb22` 就这样删过一次 android/),所以 android/ 必须常驻工作区。**Agent 只有 `MediaFetch31` 读写权限**,推不进 MediaFetch30 → 双仓不可行。
+- **⚠️ 同步注意**:我在工作区改 android/ 后,**需用户在 Make 界面手动推送一次**(右上角 ↑ / ··· 同步),Figma 才生成 `Update files from Figma Make` 提交把改动带上远端;用户再 `git fetch && git reset --hard origin/main` 构建。若漏推送,用户 pull 到旧代码、构建显示全 up-to-date。
+- **`MediaFetch30`(Kotlin,私有)**:Android 架构/脚手架的原始来源,现已并入 MediaFetch31/android(包名已是 `com.tcpg007014.tcpgyt`);后续开发在 MediaFetch31 进行,MediaFetch30 可归档。
 - **⚠️ 本文件第 5、6 节里那一堆 `.kt`(TcpgytTheme/MoreScreen/FilesScreen/TcpgytSegmented…)和"MediaFetch31/main 上的 Android 提交"是写歪的笔记 —— 那些文件在任何仓库里都不存在,是设计设想而非真实产物,已导致过一次跑偏。视为"未来 Android 端的设计参考约定",不要当成已完成代码。**
-- **⚠️ 仓库工作流(2026-07-31 与用户核实)**:用户唯一 `git pull`/构建源 = **`MediaFetch31`**(`cd D:\test\MediaFetch31` → `git pull origin main`,再 `cd android` gradlew 构建)。Android 工程内容源自私有仓库 `MediaFetch30`,用户本地置于 `MediaFetch31\android`;**但该 `android/` 目前不在 MediaFetch31 远端**(`.gitignore` 未忽略,只是未提交)。**`MediaFetch301` 不存在**(曾口误)。⇒ 推文档一律推 `MediaFetch31/docs`(用户 pull 得到);Phase E 写 Kotlin 时须先定 `android/` 交付路径(提交进 MediaFetch31 vs 另行同步),否则 pull 不到。
-- 项目阶段(章程 §5):A 治理✅ / B 架构依赖✅(ADR-001 + docs 03~08 草案 + docs 09 工具链闸门结论,均待审批) / C 信息架构✅ / D 前端原型✅ / E Android 未开始(前置闸门=工具链审批,已结论化✅)。
+- **⚠️ 仓库工作流(2026-07-31)**:用户唯一 `git pull`/构建源 = **`MediaFetch31`**(`cd D:\test\MediaFetch31` → `git fetch origin` → `git reset --hard origin/main` → `cd android` → `.\gradlew.bat :app:assembleDebug`)。PowerShell 5.1 **不支持 `&&`**,命令要分行。`git reset` 时的 "should have been pointers"(src/imports/image-*.png,LFS 警告)无害,待后续收拾。**`MediaFetch301` 不存在**(曾口误)。
+- 项目阶段(章程 §5):A 治理✅ / B 架构依赖✅ / C 信息架构✅ / D 前端原型✅ / **E Android 进行中**:交付管线✅、D-001 入 build✅、引擎骨架✅;下一步见 §7。
 - 引擎核心:**yt-dlp**(经 ADR-001 批准的 Android 封装 `youtubedl-android` 0.18.1 + ffmpeg;GPL-3.0 路线),允许引入成熟第三方库提效。
 
 ## 1. 项目概览
