@@ -9,13 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material.icons.outlined.Cookie
-import androidx.compose.material.icons.outlined.Download
-import androidx.compose.material.icons.outlined.FolderOpen
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,8 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
+import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
 import com.tcpg007014.tcpgyt.ui.components.TcpgytSegmented
 import com.tcpg007014.tcpgyt.ui.theme.AppTheme
+import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
+import com.tcpg007014.tcpgyt.ui.theme.themePrimarySoft
+import com.tcpg007014.tcpgyt.ui.theme.themeSectionLabel
 
 private enum class SettingPage {
     None, DownloadPrefs, SaveLocation, Cookie, LocalData, Appearance, About
@@ -36,9 +33,7 @@ private enum class SettingPage {
 
 private data class SettingItem(
     val label: String,
-    val detail: String,
     val icon: ImageVector,
-    val iconBg: Color,
     val onClick: () -> Unit
 )
 
@@ -81,8 +76,6 @@ fun MoreScreen(
 
     BackHandler(enabled = page != SettingPage.None) { page = SettingPage.None }
 
-    val primaryWash = MaterialTheme.colorScheme.primaryContainer
-
     if (page == SettingPage.None) {
         Column(
             modifier = Modifier
@@ -98,24 +91,24 @@ fun MoreScreen(
             SettingsGroup(
                 title = "下载",
                 items = listOf(
-                    SettingItem("下载偏好", "默认格式、画质与网络", Icons.Outlined.Download, primaryWash) { page = SettingPage.DownloadPrefs },
-                    SettingItem("保存位置", savePath, Icons.Outlined.FolderOpen, Color(0xFFFFE4CC)) { page = SettingPage.SaveLocation }
+                    SettingItem("下载偏好", TcpgytIcons.Settings) { page = SettingPage.DownloadPrefs },
+                    SettingItem("保存位置", TcpgytIcons.Folder) { page = SettingPage.SaveLocation }
                 )
             )
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
             SettingsGroup(
                 title = "隐私",
                 items = listOf(
-                    SettingItem("Cookie 管理", if (cookieEnabled) "已启用 · ${cookieItems.size} 个占位" else "未启用 · 本地导入", Icons.Outlined.Cookie, Color(0xFFD4EEFF)) { page = SettingPage.Cookie },
-                    SettingItem("本地数据", "清理任务记录与缓存", Icons.Outlined.Storage, Color(0xFFEBE4FF)) { page = SettingPage.LocalData }
+                    SettingItem("Cookie 管理", TcpgytIcons.Shield) { page = SettingPage.Cookie },
+                    SettingItem("本地数据", TcpgytIcons.Sliders) { page = SettingPage.LocalData }
                 )
             )
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
             SettingsGroup(
                 title = "应用",
                 items = listOf(
-                    SettingItem("外观", current.label, Icons.Outlined.AutoAwesome, primaryWash) { page = SettingPage.Appearance },
-                    SettingItem("关于与支持", "TCPGYT · 原型版", Icons.Outlined.Info, primaryWash) { page = SettingPage.About }
+                    SettingItem("外观", TcpgytIcons.Spark) { page = SettingPage.Appearance },
+                    SettingItem("关于与支持", TcpgytIcons.Info) { page = SettingPage.About }
                 )
             )
             Spacer(Modifier.height(24.dp))
@@ -253,33 +246,35 @@ fun MoreScreen(
 
 @Composable
 private fun SettingsGroup(title: String, items: List<SettingItem>) {
+    val theme = LocalAppTheme.current
     Text(
         title,
         style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+        fontWeight = FontWeight.Black,
+        color = themeSectionLabel(theme),
+        modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
     )
     items.forEach { item ->
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.65f)),
-            shape = RoundedCornerShape(20.dp),
+                .padding(bottom = 12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.72f)),
+            shape = RoundedCornerShape(24.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(onClick = item.onClick)
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(item.iconBg),
+                        .clip(CircleShape)
+                        .background(themePrimarySoft(theme)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -289,12 +284,20 @@ private fun SettingsGroup(title: String, items: List<SettingItem>) {
                         modifier = Modifier.size(22.dp)
                     )
                 }
-                Spacer(Modifier.width(14.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(item.label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text(item.detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Text("›", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    item.label,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = TcpgytIcons.Chevron,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(21.dp)
+                )
             }
         }
     }
@@ -439,7 +442,7 @@ private fun SaveLocationPage(savePath: String, onSelectRequest: () -> Unit, onRe
                 Box(
                     Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
-                ) { Text("📁", style = MaterialTheme.typography.titleLarge) }
+                ) { Icon(TcpgytIcons.Folder, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp)) }
                 Column {
                     Text(savePath, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
                     Text("视频和音频的原型保存位置", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -458,7 +461,7 @@ private fun SaveLocationPage(savePath: String, onSelectRequest: () -> Unit, onRe
                         Text("选择文件夹", style = MaterialTheme.typography.bodyLarge)
                         Text("系统文件夹选择器尚未接入", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    Text("›", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+                    Icon(TcpgytIcons.Chevron, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 }
                 HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
                 TextButton(onClick = onRestoreRequest, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
@@ -659,7 +662,7 @@ private fun AppearancePage(current: AppTheme, onPick: (AppTheme) -> Unit) {
                             .border(1.5.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (selected) Text("✓", style = MaterialTheme.typography.labelSmall, color = Color.White)
+                        if (selected) Icon(TcpgytIcons.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
                     }
                 }
             }
@@ -681,7 +684,7 @@ private fun AboutPage() {
         Box(
             Modifier.size(72.dp).clip(RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
-        ) { Text("↓", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary) }
+        ) { Icon(TcpgytIcons.Download, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(30.dp)) }
         Spacer(Modifier.height(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("TCPGYT", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)

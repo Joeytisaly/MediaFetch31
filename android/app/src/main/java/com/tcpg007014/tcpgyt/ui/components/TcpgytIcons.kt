@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 
 object TcpgytIcons {
 
-    // ── 底部导航图标（保持不变）─────────────────────────────
+    // ── 底部导航图标（保持不变）─────────────
 
     // ⏻ Power symbol: filled stem + arc ring with 60° gap at top
     val Tasks get() = icon("Tasks") {
@@ -194,6 +194,99 @@ object TcpgytIcons {
             lineTo(16f, 19f)
             lineToRelative(2.45f, -0.55f)
             close()
+        }
+    }
+
+    // ⚙ 设置（齿轮）—— 对照画布 settings：中心 circle r3 + 外圈齿轮 path
+    val Settings get() = icon("Settings") {
+        // 中心圆 r3 @ (12,12)
+        stroke {
+            moveTo(9f, 12f)
+            arcToRelative(3f, 3f, 0f, true, true, 6f, 0f)
+            arcToRelative(3f, 3f, 0f, true, true, -6f, 0f)
+        }
+        // 外圈齿轮
+        stroke {
+            moveTo(19.4f, 15f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, 0.34f, 1.88f)
+            lineToRelative(0.06f, 0.06f)
+            lineToRelative(-2.16f, 2.16f)
+            lineToRelative(-0.06f, -0.06f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, -1.88f, -0.34f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, -1.03f, 1.56f)
+            verticalLineToRelative(0.09f)
+            horizontalLineToRelative(-3.05f)
+            verticalLineToRelative(-0.09f)
+            arcTo(1.7f, 1.7f, 0f, false, false, 10.59f, 18.7f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, -1.88f, 0.34f)
+            lineToRelative(-0.06f, 0.06f)
+            lineToRelative(-2.16f, -2.16f)
+            lineToRelative(0.06f, -0.06f)
+            arcTo(1.7f, 1.7f, 0f, false, false, 6.9f, 15f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, -1.56f, -1.03f)
+            horizontalLineToRelative(-0.09f)
+            verticalLineToRelative(-3.05f)
+            horizontalLineToRelative(0.09f)
+            arcTo(1.7f, 1.7f, 0f, false, false, 6.9f, 9.89f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, -0.34f, -1.88f)
+            lineTo(6.5f, 7.95f)
+            lineToRelative(2.16f, -2.16f)
+            lineToRelative(0.06f, 0.06f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, 1.88f, 0.34f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, 1.03f, -1.56f)
+            verticalLineToRelative(-0.09f)
+            horizontalLineToRelative(3.05f)
+            verticalLineToRelative(0.09f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, 1.03f, 1.56f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, 1.88f, -0.34f)
+            lineToRelative(0.06f, -0.06f)
+            lineToRelative(2.16f, 2.16f)
+            lineToRelative(-0.06f, 0.06f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, -0.34f, 1.88f)
+            arcToRelative(1.7f, 1.7f, 0f, false, false, 1.56f, 1.03f)
+            horizontalLineToRelative(0.09f)
+            verticalLineToRelative(3.05f)
+            horizontalLineToRelative(-0.09f)
+            arcTo(1.7f, 1.7f, 0f, false, false, 19.4f, 15f)
+            close()
+        }
+    }
+
+    // 🛡 盾（Cookie 管理）—— 对照画布 shield 单一描边 path
+    val Shield get() = icon("Shield") {
+        stroke {
+            moveTo(12f, 3f)
+            lineTo(19f, 6f)
+            verticalLineToRelative(5f)
+            curveToRelative(0f, 4.2f, -2.9f, 7.8f, -7f, 9.5f)
+            curveTo(7.9f, 18.8f, 5f, 15.2f, 5f, 11f)
+            verticalLineTo(6f)
+            close()
+        }
+    }
+
+    // 🎛 推子（本地数据）—— 对照画布 sliders：3 行分段线 + 3 个旋钮圆 r2
+    val Sliders get() = icon("Sliders") {
+        stroke { moveTo(4f, 6f); horizontalLineToRelative(7f) }
+        stroke { moveTo(15f, 6f); horizontalLineToRelative(5f) }
+        stroke { moveTo(4f, 12f); horizontalLineToRelative(3f) }
+        stroke { moveTo(11f, 12f); horizontalLineToRelative(9f) }
+        stroke { moveTo(4f, 18f); horizontalLineToRelative(10f) }
+        stroke { moveTo(18f, 18f); horizontalLineToRelative(2f) }
+        stroke {
+            moveTo(11f, 6f)
+            arcToRelative(2f, 2f, 0f, true, true, 4f, 0f)
+            arcToRelative(2f, 2f, 0f, true, true, -4f, 0f)
+        }
+        stroke {
+            moveTo(7f, 12f)
+            arcToRelative(2f, 2f, 0f, true, true, 4f, 0f)
+            arcToRelative(2f, 2f, 0f, true, true, -4f, 0f)
+        }
+        stroke {
+            moveTo(14f, 18f)
+            arcToRelative(2f, 2f, 0f, true, true, 4f, 0f)
+            arcToRelative(2f, 2f, 0f, true, true, -4f, 0f)
         }
     }
 
