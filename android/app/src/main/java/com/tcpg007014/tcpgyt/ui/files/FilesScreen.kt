@@ -3,9 +3,7 @@ package com.tcpg007014.tcpgyt.ui.files
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +14,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 
 private data class DemoFile(
     val id: Int,
@@ -229,11 +228,10 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
     // File detail sheet — matches React prototype completed-task detail
     detailTarget?.let { file ->
         val displayName = file.name.substringBeforeLast(".")
-        ModalBottomSheet(onDismissRequest = { detailTarget = null }) {
+        TcpgytBottomSheet(onDismiss = { detailTarget = null }) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 36.dp)
             ) {
@@ -351,7 +349,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
 
     // File operations bottom sheet
     menuTarget?.let { file ->
-        ModalBottomSheet(onDismissRequest = { menuTarget = null }) {
+        TcpgytBottomSheet(onDismiss = { menuTarget = null }) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
                 Text(file.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text("${file.type} · ${file.meta}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -386,7 +384,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         AlertDialog(
             onDismissRequest = { deleteTarget = null },
             title = { Text("删除这个文件？") },
-            text = { Text("这只是原型演示：将从文件库模拟列表移除，不会触砹设备文件。") },
+            text = { Text("这只是原型演示：将从文件库模拟列表移除，不会触碰设备文件。") },
             confirmButton = {
                 TextButton(onClick = {
                     files = files.filter { it.id != file.id }
