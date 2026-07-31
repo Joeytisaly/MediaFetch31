@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.components.SheetSection
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
+import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
 
 private data class DemoFile(
     val id: Int,
@@ -130,7 +131,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 Box(
                     Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
-                ) { Text("📁", style = MaterialTheme.typography.bodyMedium) }
+                ) { Icon(TcpgytIcons.Folder, contentDescription = null, modifier = Modifier.size(19.dp), tint = MaterialTheme.colorScheme.primary) }
                 Spacer(Modifier.width(8.dp))
                 TextField(
                     value = query,
@@ -200,8 +201,11 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         if (shown.isEmpty()) {
             Box(Modifier.fillMaxWidth().padding(top = 48.dp), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("📂", style = MaterialTheme.typography.displaySmall)
-                    Spacer(Modifier.height(8.dp))
+                    Box(
+                        Modifier.size(64.dp).clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)),
+                        contentAlignment = Alignment.Center
+                    ) { Icon(TcpgytIcons.Folder, contentDescription = null, modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.primary) }
+                    Spacer(Modifier.height(10.dp))
                     Text(
                         if (files.isEmpty()) "还没有完成文件" else "没有匹配的原型文件",
                         style = MaterialTheme.typography.bodyMedium,
@@ -392,13 +396,13 @@ private fun FileCard(file: DemoFile, onClick: () -> Unit) {
             Box(
                 Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(Color(0xFFE8F5EC)),
                 contentAlignment = Alignment.Center
-            ) { Text("✓", style = MaterialTheme.typography.titleLarge, color = Color(0xFF7EBE9A), fontWeight = FontWeight.Bold) }
+            ) { Icon(TcpgytIcons.Check, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color(0xFF5B9A77)) }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(file.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
                 Text("${file.type} · ${file.meta}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text("⋯", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(TcpgytIcons.More, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
