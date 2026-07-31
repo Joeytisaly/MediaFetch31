@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.components.TcpgytSegmented
 import com.tcpg007014.tcpgyt.ui.theme.AppTheme
@@ -336,11 +337,15 @@ private fun DownloadPrefsPage(
             modifier = Modifier.padding(bottom = 16.dp)
         )
         SectionCard("默认类型") {
+            // 画布 line173：py-2.5 + text-sm → 14sp / lineHeight 20sp / 纵向 10dp（比文件筛选略大）
             TcpgytSegmented(
                 options = listOf("视频", "音频"),
                 selected = defaultType,
                 onSelect = onDefaultType,
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(12.dp),
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                verticalPadding = 10.dp
             )
         }
         Spacer(Modifier.height(12.dp))
