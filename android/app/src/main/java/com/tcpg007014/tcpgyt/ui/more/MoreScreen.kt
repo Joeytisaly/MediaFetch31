@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
+import com.tcpg007014.tcpgyt.ui.components.TcpgytSegmented
 import com.tcpg007014.tcpgyt.ui.theme.AppTheme
 
 private enum class SettingPage {
@@ -335,11 +336,12 @@ private fun DownloadPrefsPage(
             modifier = Modifier.padding(bottom = 16.dp)
         )
         SectionCard("默认类型") {
-            Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("视频", "音频").forEach { type ->
-                    FilterChip(selected = defaultType == type, onClick = { onDefaultType(type) }, label = { Text(type) })
-                }
-            }
+            TcpgytSegmented(
+                options = listOf("视频", "音频"),
+                selected = defaultType,
+                onSelect = onDefaultType,
+                modifier = Modifier.padding(12.dp)
+            )
         }
         Spacer(Modifier.height(12.dp))
         SectionCard("格式与网络") {

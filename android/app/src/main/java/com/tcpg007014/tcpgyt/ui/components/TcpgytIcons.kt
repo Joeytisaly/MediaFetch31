@@ -95,6 +95,33 @@ object TcpgytIcons {
         }
     }
 
+    // 📁 黄色双色实心文件夹（自带配色；渲染时用 tint = Color.Unspecified）
+    // 对照画布搜索栏左侧标签：夹身 #f7c94b + 封盖 #ffd76b
+    val FolderSolid get() = ImageVector.Builder("FolderSolid", 24.dp, 24.dp, 24f, 24f).apply {
+        path(fill = SolidColor(Color(0xFFF7C94B))) {
+            moveTo(3f, 8f)
+            arcToRelative(2f, 2f, 0f, false, true, 2f, -2f)
+            horizontalLineToRelative(4.5f)
+            lineToRelative(2f, 2.5f)
+            horizontalLineTo(19f)
+            arcToRelative(2f, 2f, 0f, false, true, 2f, 2f)
+            verticalLineToRelative(7f)
+            arcToRelative(2f, 2f, 0f, false, true, -2f, 2f)
+            horizontalLineTo(5f)
+            arcToRelative(2f, 2f, 0f, false, true, -2f, -2f)
+            close()
+        }
+        path(fill = SolidColor(Color(0xFFFFD76B))) {
+            moveTo(3f, 11f)
+            horizontalLineToRelative(18f)
+            verticalLineToRelative(6f)
+            arcToRelative(2f, 2f, 0f, false, true, -2f, 2f)
+            horizontalLineTo(5f)
+            arcToRelative(2f, 2f, 0f, false, true, -2f, -2f)
+            close()
+        }
+    }.build()
+
     // 🔗 链接
     val Link get() = icon("Link") {
         stroke {

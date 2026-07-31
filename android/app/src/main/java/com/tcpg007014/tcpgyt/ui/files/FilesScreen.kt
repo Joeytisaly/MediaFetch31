@@ -17,6 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.components.SheetSection
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
+import com.tcpg007014.tcpgyt.ui.components.TcpgytSegmented
+import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
+import com.tcpg007014.tcpgyt.ui.theme.themePrimarySoft
 
 private data class DemoFile(
     val id: Int,
@@ -35,7 +38,6 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
     var query by remember { mutableStateOf("") }
     var filter by remember { mutableStateOf("全部") }
     var sortBy by remember { mutableStateOf("最近添加") }
-    var sortMenuOpen by remember { mutableStateOf(false) }
     var deleteTarget by remember { mutableStateOf<DemoFile?>(null) }
     var menuTarget by remember { mutableStateOf<DemoFile?>(null) }
     var detailTarget by remember { mutableStateOf<DemoFile?>(null) }
@@ -94,25 +96,19 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 Text("全部文件", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
                 Text("仅显示当前原型文件库中的项目", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Box {
-                Surface(
-                    onClick = { sortMenuOpen = true },
-                    shape = RoundedCornerShape(50),
-                    color = Color.White.copy(alpha = 0.65f)
-                ) {
-                    Text(
-                        "排序 · $sortBy",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
-                    )
-                }
-                DropdownMenu(expanded = sortMenuOpen, onDismissRequest = { sortMenuOpen = false }) {
-                    listOf("最近添加", "名称").forEach { opt ->
-                        DropdownMenuItem(text = { Text(opt) }, onClick = { sortBy = opt; sortMenuOpen = false })
-                    }
-                }
+            // 排序 = 切换按钮（对照画布：点按在 最近添加↔名称 之间切换，不弹菜单）
+            Surface(
+                onClick = { sortBy = if (sortBy == "最近添加") "名称" else "最近添加" },
+                shape = RoundedCornerShape(50),
+                color = themePrimarySoft(LocalAppTheme.current)
+            ) {
+                Text(
+                    "排序 · $sortBy",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
+                )
             }
         }
 
@@ -129,9 +125,9 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.primaryContainer),
+                    Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.8f)),
                     contentAlignment = Alignment.Center
-                ) { Icon(TcpgytIcons.Folder, contentDescription = null, modifier = Modifier.size(19.dp), tint = MaterialTheme.colorScheme.primary) }
+                ) { Icon(TcpgytIcons.FolderSolid, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color.Unspecified) }
                 Spacer(Modifier.width(8.dp))
                 TextField(
                     value = query,
@@ -156,37 +152,12 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
 
         Spacer(Modifier.height(10.dp))
 
-        // Segmented control — tinted container + white-selected tab matches React prototype
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f))
-                .padding(4.dp)
-        ) {
-            Row(Modifier.fillMaxWidth()) {
-                listOf("全部", "音频", "视频").forEach { label ->
-                    val selected = filter == label
-                    Surface(
-                        onClick = { filter = label },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        color = if (selected) Color.White else Color.Transparent,
-                        shadowElevation = if (selected) 1.dp else 0.dp
-                    ) {
-                        Text(
-                            label,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = if (selected) FontWeight.Black else FontWeight.Medium,
-                            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .padding(vertical = 9.dp)
-                                .wrapContentWidth(Alignment.CenterHorizontally)
-                        )
-                    }
-                }
-            }
-        }
+        // 分段筛选 —— 统一走 TcpgytSegmented（画布 --tcp-primary-muted 底槽）
+        TcpgytSegmented(
+            options = listOf("全部", "音频", "视频"),
+            selected = filter,
+            onSelect = { filter = it }
+        )
 
         Spacer(Modifier.height(6.dp))
         Row(
@@ -343,9 +314,9 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 Text("${file.type} · ${file.meta}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(16.dp))
                 listOf(
-                    "📄  打开文件" to { menuTarget = null; onSnack("正在打开原型文件") },
-                    "📂  查看位置" to { menuTarget = null; onSnack("Download / TCPGYT（原型位置）") },
-                    "🗑️  移除记录" to { files = files.filter { it.id != file.id }; menuTarget = null; onSnack("已移除任务记录") }
+                    "打开文件" to { menuTarget = null; onSnack("正在打开原型文件") },
+                    "查看位置" to { menuTarget = null; onSnack("Download / TCPGYT（原型位置）") },
+                    "移除记录" to { files = files.filter { it.id != file.id }; menuTarget = null; onSnack("已移除任务记录") }
                 ).forEach { (label, action) ->
                     Card(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clickable { action() },
@@ -362,7 +333,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(0.dp)
                 ) {
-                    Text("🗑️  删除原型文件", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp))
+                    Text("删除原型文件", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp))
                 }
             }
         }

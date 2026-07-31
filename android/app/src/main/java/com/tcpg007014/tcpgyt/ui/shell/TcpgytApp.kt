@@ -120,7 +120,7 @@ private fun FloatingNavBar(
                         Icon(
                             imageVector = when (dest) {
                                 Destination.Tasks -> TcpgytIcons.Tasks
-                                Destination.Files -> TcpgytIcons.Files
+                                Destination.Files -> TcpgytIcons.Link
                                 Destination.More  -> TcpgytIcons.More
                             },
                             contentDescription = dest.label,

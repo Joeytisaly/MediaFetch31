@@ -121,6 +121,15 @@ fun themeSectionLabel(theme: AppTheme): Color = when (theme) {
     AppTheme.Night    -> Color(0xFF89A9C0)
 }
 
+/** = --tcp-primary-muted（分段控件底槽的中性淡色）。 */
+fun themePrimaryMuted(theme: AppTheme): Color = when (theme) {
+    AppTheme.Blush    -> Color(0xFFF5EDF0)
+    AppTheme.Blue     -> Color(0xFFEDF4F8)
+    AppTheme.Mint     -> Color(0xFFEDF6F1)
+    AppTheme.Lavender -> Color(0xFFF2EEF8)
+    AppTheme.Night    -> Color(0xFF1C3C58)
+}
+
 /** 当前生效的主题，供无法直接拿到 AppTheme 的子 composable 读取辅助色。 */
 val LocalAppTheme = staticCompositionLocalOf { AppTheme.Blush }
 
