@@ -26,49 +26,46 @@ fun themePrimaryWash(theme: AppTheme): Color = when (theme) {
     AppTheme.Night    -> Color(0xFF1F4B6E)
 }
 
-fun themeProgressColor(theme: AppTheme): Color = when (theme) {
-    AppTheme.Blush    -> Color(0xFFAFCBE7)
-    AppTheme.Blue     -> Color(0xFF76B9E6)
-    AppTheme.Mint     -> Color(0xFF78C8B1)
-    AppTheme.Lavender -> Color(0xFFA99AD8)
-    AppTheme.Night    -> Color(0xFF70BDE8)
-}
-
 private fun scheme(theme: AppTheme) = when (theme) {
     AppTheme.Blush -> lightColorScheme(
         primary = Color(0xFFED1D55), onPrimary = Color.White,
+        secondary = Color(0xFFAFCBE7), onSecondary = Color.White,
+        primaryContainer = Color(0xFFFFD4DF), onPrimaryContainer = Color(0xFF3D0012),
         background = Color(0xFFFFF9F8), surface = Color.White,
         surfaceVariant = Color(0xFFFFEAF1), onSurface = Color(0xFF281820),
-        onSurfaceVariant = Color(0xFF8B6572), outline = Color(0xFFF3D6E0),
-        secondary = Color(0xFFFFD5E3), primaryContainer = Color(0xFFFFD4DF)
+        onSurfaceVariant = Color(0xFF8B6572), outline = Color(0xFFF3D6E0)
     )
     AppTheme.Blue -> lightColorScheme(
         primary = Color(0xFF287FBD), onPrimary = Color.White,
+        secondary = Color(0xFF76B9E6), onSecondary = Color.White,
+        primaryContainer = Color(0xFFCFE9F9), onPrimaryContainer = Color(0xFF001E30),
         background = Color(0xFFF5FAFF), surface = Color.White,
         surfaceVariant = Color(0xFFEAF2FF), onSurface = Color(0xFF18263D),
-        onSurfaceVariant = Color(0xFF5C6B85), outline = Color(0xFFD1DDF2),
-        primaryContainer = Color(0xFFCFE9F9)
+        onSurfaceVariant = Color(0xFF5C6B85), outline = Color(0xFFD1DDF2)
     )
     AppTheme.Mint -> lightColorScheme(
         primary = Color(0xFF218C72), onPrimary = Color.White,
+        secondary = Color(0xFF78C8B1), onSecondary = Color.White,
+        primaryContainer = Color(0xFFCBEEE1), onPrimaryContainer = Color(0xFF002018),
         background = Color(0xFFF4FCF8), surface = Color.White,
         surfaceVariant = Color(0xFFE6F6F0), onSurface = Color(0xFF18342D),
-        onSurfaceVariant = Color(0xFF55736B), outline = Color(0xFFCDE6DD),
-        primaryContainer = Color(0xFFCBEEE1)
+        onSurfaceVariant = Color(0xFF55736B), outline = Color(0xFFCDE6DD)
     )
     AppTheme.Lavender -> lightColorScheme(
         primary = Color(0xFF7659AD), onPrimary = Color.White,
+        secondary = Color(0xFFA99AD8), onSecondary = Color.White,
+        primaryContainer = Color(0xFFE2D7F5), onPrimaryContainer = Color(0xFF1D0A45),
         background = Color(0xFFFAF8FF), surface = Color.White,
         surfaceVariant = Color(0xFFF0EBFF), onSurface = Color(0xFF2B2147),
-        onSurfaceVariant = Color(0xFF6C6287), outline = Color(0xFFDED5F7),
-        primaryContainer = Color(0xFFE2D7F5)
+        onSurfaceVariant = Color(0xFF6C6287), outline = Color(0xFFDED5F7)
     )
     AppTheme.Night -> lightColorScheme(
         primary = Color(0xFF76C2ED), onPrimary = Color(0xFF0D2236),
+        secondary = Color(0xFF70BDE8), onSecondary = Color(0xFF0D2236),
+        primaryContainer = Color(0xFF1F4B6E), onPrimaryContainer = Color(0xFFCEEAFF),
         background = Color(0xFF0C1B2B), surface = Color(0xFF142D46),
         surfaceVariant = Color(0xFF1C3858), onSurface = Color(0xFFEEF7FF),
-        onSurfaceVariant = Color(0xFFACC1D1), outline = Color(0xFF2D4A62),
-        primaryContainer = Color(0xFF1F4B6E)
+        onSurfaceVariant = Color(0xFFACC1D1), outline = Color(0xFF2D4A62)
     )
 }
 
