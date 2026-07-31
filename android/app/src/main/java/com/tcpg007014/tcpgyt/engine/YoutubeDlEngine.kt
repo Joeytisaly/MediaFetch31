@@ -4,18 +4,22 @@ import android.content.Context
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLException
 import com.yausername.youtubedl_android.YoutubeDLRequest
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.coroutineContext
 
 /**
  * 基于 youtubedl-android(yt-dlp)的 [DownloadEngine] 适配实现。
  *
- * 骨架阶段目标:打通 init / probe / download / cancel 的调用链与类型边界,
- * 把底层库完全封装在本类内部。**不含** ffmpeg 后处理(D-002)、协程调度、UI 接入。
- *
- * 注意:方法为阻塞式,须由调用方置于后台线程(见 [DownloadEngine] 线程约定)。
+ * 把底层库完全封装在本类内部;上层只认 [DownloadEngine] 与领域模型(ADR §3/§8)。
+ * 所有阻塞调用都置于 [Dispatchers.IO];[download] 支持结构化取消 ——
+ * 协程被取消时销毁对应 yt-dlp 进程。**不含** ffmpeg 后处理(D-002)、UI 接入。
  */
 class YoutubeDlEngine(private val appContext: Context) : DownloadEngine {
 
-    override fun init() {
+    override suspend fun init() = withContext(Dispatchers.IO) {
         try {
             YoutubeDL.init(appContext)
         } catch (e: YoutubeDLException) {
@@ -23,24 +27,28 @@ class YoutubeDlEngine(private val appContext: Context) : DownloadEngine {
         }
     }
 
-    override fun probe(url: String): MediaProbe {
+    override suspend fun probe(url: String): MediaProbe = withContext(Dispatchers.IO) {
         val info = YoutubeDL.getInfo(url)
-        return MediaProbe(
+        MediaProbe(
             url = url,
             title = info.title,
             durationSeconds = info.duration,
         )
     }
 
-    override fun download(
+    override suspend fun download(
         request: DownloadRequest,
         onProgress: (percent: Float, etaSeconds: Long, line: String) -> Unit,
-    ): DownloadResult {
+    ): DownloadResult = withContext(Dispatchers.IO) {
         val ytRequest = YoutubeDLRequest(request.url).apply {
             // 输出模板:标题.扩展名,写入指定目录
             addOption("-o", "${request.outputDir}/%(title)s.%(ext)s")
         }
-        return try {
+        // 结构化取消:协程被取消时销毁底层进程(execute 为阻塞调用,自身不感知协程取消)。
+        val cancelHandle = coroutineContext[Job]?.invokeOnCompletion { cause ->
+            if (cause is CancellationException) YoutubeDL.destroyProcessById(request.taskId)
+        }
+        try {
             val response = YoutubeDL.execute(ytRequest, request.taskId) { percent, eta, line ->
                 onProgress(percent, eta, line)
             }
@@ -49,6 +57,8 @@ class YoutubeDlEngine(private val appContext: Context) : DownloadEngine {
             DownloadResult.Canceled
         } catch (e: YoutubeDLException) {
             DownloadResult.Failure(e.message ?: "下载失败")
+        } finally {
+            cancelHandle?.dispose()
         }
     }
 

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tcpg007014.tcpgyt.ui.dev.EngineSmokeScreen
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 import com.tcpg007014.tcpgyt.ui.components.TcpgytIcons
 import com.tcpg007014.tcpgyt.ui.components.TcpgytSegmented
@@ -38,7 +39,7 @@ import com.tcpg007014.tcpgyt.ui.theme.themePrimaryWash
 import com.tcpg007014.tcpgyt.ui.theme.themeSectionLabel
 
 private enum class SettingPage {
-    None, DownloadPrefs, SaveLocation, Cookie, LocalData, Appearance, About
+    None, DownloadPrefs, SaveLocation, Cookie, LocalData, Appearance, About, EngineSmoke
 }
 
 private data class SettingItem(
@@ -126,7 +127,8 @@ fun MoreScreen(
                 title = "应用",
                 items = listOf(
                     SettingItem("外观", TcpgytIcons.Spark) { page = SettingPage.Appearance },
-                    SettingItem("关于与支持", TcpgytIcons.Info) { page = SettingPage.About }
+                    SettingItem("关于与支持", TcpgytIcons.Info) { page = SettingPage.About },
+                    SettingItem("引擎自检(开发)", TcpgytIcons.Settings) { page = SettingPage.EngineSmoke }
                 )
             )
             Spacer(Modifier.height(24.dp))
@@ -152,6 +154,7 @@ fun MoreScreen(
                     SettingPage.LocalData     -> "本地数据"
                     SettingPage.Appearance    -> "外观"
                     SettingPage.About         -> "关于与支持"
+                    SettingPage.EngineSmoke   -> "引擎自检(开发)"
                     else -> ""
                 },
                 style = MaterialTheme.typography.headlineLarge,
@@ -193,6 +196,7 @@ fun MoreScreen(
                     }
                 )
                 SettingPage.About -> AboutPage()
+                SettingPage.EngineSmoke -> EngineSmokeScreen()
                 else -> Unit
             }
         }

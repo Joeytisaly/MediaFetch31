@@ -7,25 +7,25 @@ package com.tcpg007014.tcpgyt.engine
  * **不得**直接引用 youtubedl-android、也不得自行拼接 yt-dlp 命令。
  * 所有对底层引擎的调用都必须经由该接口的实现。
  *
- * 线程约定(骨架阶段):本接口的方法为**阻塞式**,调用方须自行放到后台线程执行。
- * 结构化并发(协程调度 + 取消)将于后续切片、连同经批准的 kotlinx-coroutines 依赖一并引入。
+ * 线程约定:本接口的方法为**挂起函数**,实现内部切到 [kotlinx.coroutines.Dispatchers.IO];
+ * 取消随协程结构化传播(取消协程即取消底层 yt-dlp 进程),调用方无需自建线程。
  */
 interface DownloadEngine {
 
     /** 初始化底层引擎(解压 python / yt-dlp 到应用私有目录)。应在应用启动后调用一次。 */
-    fun init()
+    suspend fun init()
 
     /** 解析媒体信息(标题 / 时长等),不下载媒体本身。 */
-    fun probe(url: String): MediaProbe
+    suspend fun probe(url: String): MediaProbe
 
     /**
-     * 启动一次下载。
+     * 启动一次下载。协程被取消时,底层进程会被结构化销毁。
      *
      * @param request 下载请求(含任务标识、URL、输出目录)。
      * @param onProgress 进度回调:百分比(0-100)、预计剩余秒数、原始日志行。
      * @return 下载结果(成功 / 失败,含可读原因)。
      */
-    fun download(
+    suspend fun download(
         request: DownloadRequest,
         onProgress: (percent: Float, etaSeconds: Long, line: String) -> Unit,
     ): DownloadResult
