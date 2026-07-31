@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 
 enum class AppTheme(val label: String) { Blush("淡粉"), Blue("淡蓝"), Mint("薄荷"), Lavender("薰衣草"), Night("深色") }
 private fun scheme(theme: AppTheme) = when (theme) {
-    AppTheme.Blush -> lightColorScheme(primary=Color(0xFFFF4E86),onPrimary=Color.White,background=Color(0xFFFFF8FA),surface=Color.White,surfaceVariant=Color(0xFFFFEEF3),onSurface=Color(0xFF2A1C22),onSurfaceVariant=Color(0xFF80626D),outline=Color(0xFFEDCCD7))
+    AppTheme.Blush -> lightColorScheme(primary=Color(0xFFFF3D78),onPrimary=Color.White,background=Color(0xFFFFF7FA),surface=Color(0xFFFFFFFF),surfaceVariant=Color(0xFFFFEAF1),onSurface=Color(0xFF281820),onSurfaceVariant=Color(0xFF8B6572),outline=Color(0xFFF3D6E0),secondary=Color(0xFFFFD5E3))
     AppTheme.Blue -> lightColorScheme(primary=Color(0xFF4385E8),onPrimary=Color.White,background=Color(0xFFF7FAFF),surface=Color.White,surfaceVariant=Color(0xFFEAF2FF),onSurface=Color(0xFF18263D),onSurfaceVariant=Color(0xFF5C6B85),outline=Color(0xFFD1DDF2))
     AppTheme.Mint -> lightColorScheme(primary=Color(0xFF278C76),onPrimary=Color.White,background=Color(0xFFF7FCFA),surface=Color.White,surfaceVariant=Color(0xFFE6F6F0),onSurface=Color(0xFF18342D),onSurfaceVariant=Color(0xFF55736B),outline=Color(0xFFCDE6DD))
     AppTheme.Lavender -> lightColorScheme(primary=Color(0xFF8065D9),onPrimary=Color.White,background=Color(0xFFFAF8FF),surface=Color.White,surfaceVariant=Color(0xFFF0EBFF),onSurface=Color(0xFF2B2147),onSurfaceVariant=Color(0xFF6C6287),outline=Color(0xFFDED5F7))
