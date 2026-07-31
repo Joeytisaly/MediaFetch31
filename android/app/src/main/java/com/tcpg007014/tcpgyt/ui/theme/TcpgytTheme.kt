@@ -3,6 +3,8 @@ package com.tcpg007014.tcpgyt.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -78,6 +80,12 @@ fun DrawScope.drawThemeBackground(theme: AppTheme) {
     )
 }
 
+// ── 画布辅助色映射（严格对照 src/index.css 每主题 token）──────────────
+// 画布区分三档极浅底色：wash（中）> pale ≈ soft（都很浅），并有专用的
+// section-label 分区标题灰。M3 colorScheme 无对应槽位，这里按主题集中提供，
+// 供详情页 / 筛选页复用，避免散落硬编码。
+
+/** = --tcp-primary-wash（中等浅色，如图标圆底选中态、按钮底）。 */
 fun themePrimaryWash(theme: AppTheme): Color = when (theme) {
     AppTheme.Blush    -> Color(0xFFFFD4DF)
     AppTheme.Blue     -> Color(0xFFCFE9F9)
@@ -85,6 +93,36 @@ fun themePrimaryWash(theme: AppTheme): Color = when (theme) {
     AppTheme.Lavender -> Color(0xFFE2D7F5)
     AppTheme.Night    -> Color(0xFF1F4B6E)
 }
+
+/** = --tcp-primary-soft（极浅底，如未选中图标圆底、关闭按钮底）。 */
+fun themePrimarySoft(theme: AppTheme): Color = when (theme) {
+    AppTheme.Blush    -> Color(0xFFFFF0F4)
+    AppTheme.Blue     -> Color(0xFFEDF8FF)
+    AppTheme.Mint     -> Color(0xFFEDFAF4)
+    AppTheme.Lavender -> Color(0xFFF5F0FF)
+    AppTheme.Night    -> Color(0xFF173A58)
+}
+
+/** = --tcp-primary-pale（极浅底，如选中卡片底、结果行底）。 */
+fun themePrimaryPale(theme: AppTheme): Color = when (theme) {
+    AppTheme.Blush    -> Color(0xFFFFF3F6)
+    AppTheme.Blue     -> Color(0xFFF2FAFF)
+    AppTheme.Mint     -> Color(0xFFF2FBF7)
+    AppTheme.Lavender -> Color(0xFFFAF7FF)
+    AppTheme.Night    -> Color(0xFF1A405E)
+}
+
+/** = --tcp-section-label（分区标题专用灰）。 */
+fun themeSectionLabel(theme: AppTheme): Color = when (theme) {
+    AppTheme.Blush    -> Color(0xFFA18D94)
+    AppTheme.Blue     -> Color(0xFF6D91AA)
+    AppTheme.Mint     -> Color(0xFF6D9C8D)
+    AppTheme.Lavender -> Color(0xFF9282B2)
+    AppTheme.Night    -> Color(0xFF89A9C0)
+}
+
+/** 当前生效的主题，供无法直接拿到 AppTheme 的子 composable 读取辅助色。 */
+val LocalAppTheme = staticCompositionLocalOf { AppTheme.Blush }
 
 private fun scheme(theme: AppTheme) = when (theme) {
     AppTheme.Blush -> lightColorScheme(
@@ -131,5 +169,7 @@ private fun scheme(theme: AppTheme) = when (theme) {
 
 @Composable
 fun TcpgytTheme(theme: AppTheme = AppTheme.Blush, content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = scheme(theme), content = content)
+    CompositionLocalProvider(LocalAppTheme provides theme) {
+        MaterialTheme(colorScheme = scheme(theme), content = content)
+    }
 }
