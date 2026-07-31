@@ -83,7 +83,7 @@ fun DrawScope.drawThemeBackground(theme: AppTheme) {
 // ── 画布辅助色映射（严格对照 src/index.css 每主题 token）──────
 // 画布区分三档极浅底色：wash（中）> pale ≈ soft（都很浅），并有专用的
 // section-label 分区标题灰。M3 colorScheme 无对应槽位，这里按主题集中提供，
-// 供详情页 / 筛选页复用，避免散落硬编码。
+// 供详情页 / 筛选页 / 更多子页复用，避免散落硬编码。
 
 /** = --tcp-primary-wash（中等浅色，如图标圆底选中态、按钮底）。 */
 fun themePrimaryWash(theme: AppTheme): Color = when (theme) {
@@ -103,7 +103,7 @@ fun themePrimarySoft(theme: AppTheme): Color = when (theme) {
     AppTheme.Night    -> Color(0xFF173A58)
 }
 
-/** = --tcp-primary-pale（极浅底，如选中卡片底、结果行底）。 */
+/** = --tcp-primary-pale（极浅底，如选中卡片底、结果行底、信息横幅）。 */
 fun themePrimaryPale(theme: AppTheme): Color = when (theme) {
     AppTheme.Blush    -> Color(0xFFFFF3F6)
     AppTheme.Blue     -> Color(0xFFF2FAFF)
@@ -128,6 +128,36 @@ fun themePrimaryMuted(theme: AppTheme): Color = when (theme) {
     AppTheme.Mint     -> Color(0xFFEDF6F1)
     AppTheme.Lavender -> Color(0xFFF2EEF8)
     AppTheme.Night    -> Color(0xFF1C3C58)
+}
+
+/** = --tcp-muted（次要文字/提示灰）。淡色套统一 #8D8A93，深色套 #ACC1D1。 */
+fun themeMuted(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFFACC1D1)
+    else           -> Color(0xFF8D8A93)
+}
+
+/** = --tcp-neutral-action（中性按钮填充，如“清空全部”）。 */
+fun themeNeutralAction(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFF203C56)
+    else           -> Color(0xFFF1EDF0)
+}
+
+/** = --tcp-glass（子页外层玻璃卡底）。 */
+fun themeGlass(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFF1A3650).copy(alpha = 0.72f)
+    else           -> Color.White.copy(alpha = 0.58f)
+}
+
+/** = bg-white/70（子页内层分区卡底；深色翻深，对应 index.css .tcp-theme-deep .bg-white/70）。 */
+fun themeCardSurface(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFF1F405C).copy(alpha = 0.78f)
+    else           -> Color.White.copy(alpha = 0.70f)
+}
+
+/** = border/divide-white/70（发丝分隔线；深色翻为浅蓝低透）。 */
+fun themeHairline(theme: AppTheme): Color = when (theme) {
+    AppTheme.Night -> Color(0xFFD2EDFF).copy(alpha = 0.20f)
+    else           -> Color.White.copy(alpha = 0.70f)
 }
 
 /** = --tcp-ink（toast 药丸底色）：淡色系 4 套深墨，深色套翻浅。 */
