@@ -23,6 +23,14 @@ private enum class SettingPage {
     None, DownloadPrefs, SaveLocation, Cookie, LocalData, Appearance, About
 }
 
+private data class SettingItem(
+    val label: String,
+    val detail: String,
+    val iconEmoji: String,
+    val iconBg: Color,
+    val onClick: () -> Unit
+)
+
 private data class ThemeOption(
     val theme: AppTheme,
     val title: String,
@@ -56,12 +64,13 @@ fun MoreScreen(
     var cookieItems by remember { mutableStateOf(listOf<String>()) }
     var temporaryFilesPresent by remember { mutableStateOf(true) }
     var historyCleared by remember { mutableStateOf(false) }
-    var prefPicker by remember { mutableStateOf<String?>(null) }
     var cookieConfirm by remember { mutableStateOf<String?>(null) }
     var dataConfirm by remember { mutableStateOf<String?>(null) }
     var restorePathConfirm by remember { mutableStateOf(false) }
 
     BackHandler(enabled = page != SettingPage.None) { page = SettingPage.None }
+
+    val primaryWash = MaterialTheme.colorScheme.primaryContainer
 
     if (page == SettingPage.None) {
         Column(
@@ -78,24 +87,24 @@ fun MoreScreen(
             SettingsGroup(
                 title = "下载",
                 items = listOf(
-                    Triple("下载偏好", "默认格式、画质与网络") { page = SettingPage.DownloadPrefs },
-                    Triple("保存位置", savePath) { page = SettingPage.SaveLocation }
+                    SettingItem("下载偏好", "默认格式、画质与网络", "↓", primaryWash) { page = SettingPage.DownloadPrefs },
+                    SettingItem("保存位置", savePath, "📁", Color(0xFFFFE4CC)) { page = SettingPage.SaveLocation }
                 )
             )
             Spacer(Modifier.height(16.dp))
             SettingsGroup(
                 title = "隐私",
                 items = listOf(
-                    Triple("Cookie 管理", if (cookieEnabled) "已启用 · ${cookieItems.size} 个占位" else "未启用 · 本地导入") { page = SettingPage.Cookie },
-                    Triple("本地数据", "清理任务记录与缓存") { page = SettingPage.LocalData }
+                    SettingItem("Cookie 管理", if (cookieEnabled) "已启用 · ${cookieItems.size} 个占位" else "未启用 · 本地导入", "🔒", Color(0xFFD4EEFF)) { page = SettingPage.Cookie },
+                    SettingItem("本地数据", "清理任务记录与缓存", "🗃️", Color(0xFFEBE4FF)) { page = SettingPage.LocalData }
                 )
             )
             Spacer(Modifier.height(16.dp))
             SettingsGroup(
                 title = "应用",
                 items = listOf(
-                    Triple("外观", current.label) { page = SettingPage.Appearance },
-                    Triple("关于与支持", "TCPGYT · 原型版") { page = SettingPage.About }
+                    SettingItem("外观", current.label, "🎨", primaryWash) { page = SettingPage.Appearance },
+                    SettingItem("关于与支持", "TCPGYT · 原型版", "ℹ️", primaryWash) { page = SettingPage.About }
                 )
             )
             Spacer(Modifier.height(24.dp))
@@ -229,40 +238,10 @@ fun MoreScreen(
             dismissButton = { TextButton(onClick = { dataConfirm = null }) { Text("取消") } }
         )
     }
-
-    if (prefPicker != null) {
-        AlertDialog(
-            onDismissRequest = { prefPicker = null },
-            title = { Text(prefPicker!!) },
-            text = {
-                Column {
-                    val options = when (prefPicker) {
-                        "默认视频质量" -> listOf("推荐", "高清", "省空间")
-                        "默认音频格式" -> listOf("原始音频", "MP3", "M4A")
-                        else -> listOf("仅 Wi-Fi", "任意网络")
-                    }
-                    options.forEach { opt ->
-                        TextButton(
-                            onClick = {
-                                when (prefPicker) {
-                                    "默认视频质量" -> { videoQuality = opt; onSnack("已更新默认视频质量") }
-                                    "默认音频格式" -> { audioFormat = opt; onSnack("已更新默认音频格式") }
-                                    else -> { networkPref = opt; onSnack("已更新网络偏好") }
-                                }
-                                prefPicker = null
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) { Text(opt, style = MaterialTheme.typography.bodyLarge) }
-                    }
-                }
-            },
-            confirmButton = { TextButton(onClick = { prefPicker = null }) { Text("取消") } }
-        )
-    }
 }
 
 @Composable
-private fun SettingsGroup(title: String, items: List<Triple<String, String, () -> Unit>>) {
+private fun SettingsGroup(title: String, items: List<SettingItem>) {
     Text(
         title,
         style = MaterialTheme.typography.labelSmall,
@@ -275,18 +254,28 @@ private fun SettingsGroup(title: String, items: List<Triple<String, String, () -
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        items.forEachIndexed { index, (label, detail, onClick) ->
+        items.forEachIndexed { index, item ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onClick)
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .clickable(onClick = item.onClick)
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Colored icon box
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(11.dp))
+                        .background(item.iconBg),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(item.iconEmoji, style = MaterialTheme.typography.bodyLarge)
+                }
+                Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
-                    Text(label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(item.label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(item.detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text("›", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
             }
@@ -677,7 +666,7 @@ private fun AboutPage() {
         SectionCard("应用信息") {
             listOf(
                 "开发者" to "TCPG007014 (YaR)",
-                "联系邮箱" to "ChengYuan.tcpg@gnail.com",
+                "联系邮筱" to "ChengYuan.tcpg@gnail.com",
                 "包名" to "com.tcpg007014.tcpgyt",
                 "隐私" to "数据仅保存在本机"
             ).forEachIndexed { i, (label, value) ->

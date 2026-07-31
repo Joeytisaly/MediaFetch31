@@ -47,6 +47,40 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
         )
         Spacer(Modifier.height(16.dp))
 
+        // "全部文件" header row with sort button
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text("全部文件", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+                Text("仅显示当前原型文件库中的项目", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Box {
+                Surface(
+                    onClick = { sortMenuOpen = true },
+                    shape = RoundedCornerShape(50),
+                    color = Color.White.copy(alpha = 0.65f)
+                ) {
+                    Text(
+                        "排序 · $sortBy",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
+                    )
+                }
+                DropdownMenu(expanded = sortMenuOpen, onDismissRequest = { sortMenuOpen = false }) {
+                    listOf("最近添加", "名称").forEach { opt ->
+                        DropdownMenuItem(text = { Text(opt) }, onClick = { sortBy = opt; sortMenuOpen = false })
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
         // Search bar
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -79,24 +113,15 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
             }
         }
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.dp))
 
-        // Filter + sort row
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                listOf("全部", "音频", "视频").forEach { label ->
-                    FilterChip(selected = filter == label, onClick = { filter = label }, label = { Text(label) })
-                }
-            }
-            Box {
-                TextButton(onClick = { sortMenuOpen = true }) {
-                    Text("排序 · $sortBy", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                }
-                DropdownMenu(expanded = sortMenuOpen, onDismissRequest = { sortMenuOpen = false }) {
-                    listOf("最近添加", "名称").forEach { opt ->
-                        DropdownMenuItem(text = { Text(opt) }, onClick = { sortBy = opt; sortMenuOpen = false })
-                    }
-                }
+        // Filter chips
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            listOf("全部", "音频", "视频").forEach { label ->
+                FilterChip(selected = filter == label, onClick = { filter = label }, label = { Text(label) })
             }
         }
 
@@ -120,10 +145,7 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
             }
         } else {
             shown.forEach { file ->
-                FileCard(
-                    file = file,
-                    onClick = { menuTarget = file }
-                )
+                FileCard(file = file, onClick = { menuTarget = file })
                 Spacer(Modifier.height(10.dp))
             }
         }
