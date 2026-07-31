@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tcpg007014.tcpgyt.ui.theme.LocalAppTheme
@@ -29,9 +28,10 @@ import com.tcpg007014.tcpgyt.ui.theme.themeSectionLabel
  * 选中项白底 + 主色文字 + 轻阴影，且所有 tab 文本 font-black。
  * 用于文件筛选、下载偏好·默认类型等全部 segmented control，避免各处配色漂移。
  *
- * 每个 tab 用 Box 横纵居中；并关闭 includeFontPadding（Compose 默认会在字形上方
- * 补一段字体内边距，导致文字偏上、白色药丸显厚，不如画布协调），配合
- * LineHeightStyle 上下居中裁剪行高，使文字在药丸内真正纵向居中。
+ * 选中态是一块可滑动的白色矩形（药丸），其高度由「文字 + 上下内边距」撑起。
+ * 早期用 8dp + LineHeightStyle(Trim.Both) 把行高收得过窄，白矩形比画布小一圈；
+ * 现改为纵向内边距 11dp 且不再裁剪行高，使白矩形更饱满、贴合画布。
+ * 仍关闭 includeFontPadding + Box/TextAlign 居中，保证文字横纵向都居中不偏上。
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,17 +61,13 @@ fun TcpgytSegmented(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = 11.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         label,
                         style = MaterialTheme.typography.labelMedium.copy(
-                            platformStyle = PlatformTextStyle(includeFontPadding = false),
-                            lineHeightStyle = LineHeightStyle(
-                                alignment = LineHeightStyle.Alignment.Center,
-                                trim = LineHeightStyle.Trim.Both
-                            )
+                            platformStyle = PlatformTextStyle(includeFontPadding = false)
                         ),
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center,
