@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.tcpg007014.tcpgyt.ui.components.SheetSection
 import com.tcpg007014.tcpgyt.ui.components.TcpgytBottomSheet
 
 private data class DemoFile(
@@ -245,84 +246,67 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
                 Spacer(Modifier.height(14.dp))
 
                 // 任务 section
-                FileSectionLabel("任务")
-                Card(
-                    Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
-                    Text("文件已在原型文件库中。", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(16.dp))
+                SheetSection("任务", containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)) {
+                    Text(
+                        "文件已在原型文件库中。",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    )
                 }
 
                 Spacer(Modifier.height(10.dp))
 
                 // 文件 section
-                FileSectionLabel("文件")
-                Card(
-                    Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
-                    Column {
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    clipboard.setText(AnnotatedString(displayName))
-                                    detailTarget = null; onSnack("已复制标题")
-                                }
-                                .padding(horizontal = 14.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("复制标题", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-                            Text(displayName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, maxLines = 1)
-                        }
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
-                        listOf(
-                            "格式" to file.format,
-                            "模拟文件名" to file.name,
-                            "保存位置" to "Download / TCPGYT",
-                            "完成时间" to file.completedAt
-                        ).forEachIndexed { i, (label, value) ->
-                            Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 11.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+                SheetSection("文件") {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                clipboard.setText(AnnotatedString(displayName))
+                                detailTarget = null; onSnack("已复制标题")
                             }
-                            if (i < 3) HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("复制标题", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                        Text(displayName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, maxLines = 1)
+                    }
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+                    listOf(
+                        "格式" to file.format,
+                        "模拟文件名" to file.name,
+                        "保存位置" to "Download / TCPGYT",
+                        "完成时间" to file.completedAt
+                    ).forEachIndexed { i, (label, value) ->
+                        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 11.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
                         }
+                        if (i < 3) HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
                     }
                 }
 
                 Spacer(Modifier.height(10.dp))
 
                 // 来源 section
-                FileSectionLabel("来源")
-                Card(
-                    Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.7f)),
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
-                    Column {
-                        Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 11.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("平台", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text(file.platform, style = MaterialTheme.typography.bodyMedium)
-                        }
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
-                        Row(
-                            Modifier.fillMaxWidth().padding(start = 14.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(file.url, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f), maxLines = 1)
-                            TextButton(onClick = {
-                                clipboard.setText(AnnotatedString(file.url))
-                                onSnack("已复制来源链接")
-                            }) { Text("复制链接", style = MaterialTheme.typography.labelSmall) }
-                        }
+                SheetSection("来源") {
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 11.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("平台", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(file.platform, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.6f), thickness = 0.5.dp)
+                    Row(
+                        Modifier.fillMaxWidth().padding(start = 16.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(file.url, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f), maxLines = 1)
+                        TextButton(onClick = {
+                            clipboard.setText(AnnotatedString(file.url))
+                            onSnack("已复制来源链接")
+                        }) { Text("复制链接", style = MaterialTheme.typography.labelSmall) }
                     }
                 }
 
@@ -394,11 +378,6 @@ fun FilesScreen(padding: PaddingValues, onSnack: (String) -> Unit = {}) {
             dismissButton = { TextButton(onClick = { deleteTarget = null }) { Text("取消") } }
         )
     }
-}
-
-@Composable
-private fun FileSectionLabel(title: String) {
-    Text(title, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
 }
 
 @Composable
