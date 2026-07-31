@@ -799,8 +799,38 @@ private fun AboutPage() {
                     VerticalDivider(color = themeHairline(theme), thickness = 1.dp)
                     Column(Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 14.dp)) {
                         Text("组件", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = themeMuted(theme))
-                        Text("后续显示第三方声明", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.padding(top = 4.dp))
+                        Text("见下方开源与许可", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.padding(top = 4.dp))
                     }
+                }
+            }
+            WhiteSection("开源与许可") {
+                Text(
+                    "本应用为开源软件,遵循 GPL-3.0;下方组件版权归各自作者所有,源码可经对应地址获取。",
+                    fontSize = 12.sp, lineHeight = 18.sp, fontWeight = FontWeight.SemiBold, color = themeMuted(theme),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+                HorizontalDivider(color = themeHairline(theme), thickness = 1.dp)
+                val notices = listOf(
+                    Triple("TCPGYT", "GPL-3.0", "github.com/Joeytisaly/MediaFetch31"),
+                    Triple("youtubedl-android", "GPL-3.0", "github.com/yausername/youtubedl-android"),
+                    Triple("yt-dlp", "Unlicense", "github.com/yt-dlp/yt-dlp"),
+                    Triple("FFmpeg", "LGPL-2.1+/GPL", "ffmpeg.org"),
+                    Triple("kotlinx.coroutines", "Apache-2.0", "github.com/Kotlin/kotlinx.coroutines"),
+                    Triple("Jetpack Compose / AndroidX", "Apache-2.0", "developer.android.com/jetpack")
+                )
+                notices.forEachIndexed { i, (name, license, url) ->
+                    Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+                        Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                            Text(name, fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.weight(1f))
+                            Text(
+                                license,
+                                modifier = Modifier.clip(CircleShape).background(themePrimarySoft(theme)).padding(horizontal = 10.dp, vertical = 3.dp),
+                                fontSize = 10.sp, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Text(url, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = themeMuted(theme), modifier = Modifier.padding(top = 4.dp))
+                    }
+                    if (i < notices.size - 1) HorizontalDivider(color = themeHairline(theme), thickness = 1.dp)
                 }
             }
             InfoBanner(TcpgytIcons.Info, "支持开发暂未开放", "尚未配置捐赠信息，因此不会显示链接或跳转入口。")

@@ -1,84 +1,48 @@
-# Phase E 切片 E-003(D-002):引入 ffmpeg 依赖 + ABI splits + 引擎 init 收纳 ffmpeg
+# 主线 A:下载落盘 MVP —— 分阶段拆分(逐片先审后写)
 
-## Context(为什么做)
+## Context
 
-E-002 已落地并**编译成功**(coroutines + 引擎 suspend + 冒烟入口)。用户选定推进 **D-002 ffmpeg**,并采纳我的建议:**加 ffmpeg 的同时开 ABI splits 控体积**;**版本号不改**(维持 `versionName="1.0"` / `versionCode=1`);ffmpeg 依赖已获批。
+E-001~E-003 已让引擎(suspend + 结构化取消)+ yt-dlp + ffmpeg 在真机跑通「init + probe」。主线 A 把「能解析」推进到「能真正下载到设备并可见」。因涉及**存储模型、前台服务、权限、UI 状态机**,一次做完风险高,故拆为 A-1~A-4,每片独立可构建、可验收,逐片先审后写。
 
-ffmpeg 用于下载 DASH 分离流后的音视频合并/格式转换。本切片只把依赖入 build、控住体积、并让引擎在 init 阶段一并初始化 ffmpeg,使冒烟入口能验证"ffmpeg 已就位"。真正的下载落盘/后处理调用属后续切片。
+## 关键技术约束(决定分片方式)
 
-## 依赖核实(官方来源,已完成)
+- **yt-dlp 写的是真实文件路径**,不是 `content://`。→ 落盘分两步:先下到**应用专属目录**(真实路径,无需存储权限),完成后再**发布到 MediaStore**(公共 Movies/Music/Downloads,相册/文件可见)。
+- **Android 10+ 分区存储**:用 MediaStore,不申请 `WRITE_EXTERNAL_STORAGE`;应用专属目录零权限。
+- **长任务须前台服务 + 通知**:Android 13+ 需 `POST_NOTIFICATIONS`;Android 14+ 前台服务需 `FOREGROUND_SERVICE` + 具体类型(`FOREGROUND_SERVICE_DATA_SYNC`)。
+- 下载必须经引擎适配层(已具备 `DownloadEngine.download` suspend);UI/ViewModel 不拼命令。
+- 删除须区分:删任务记录 / 删临时文件 / 删用户媒体文件(章程 §5)。
 
-- 组件:`io.github.junkfood02.youtubedl-android:ffmpeg`,版本 **`0.18.1`**(复用现有 `youtubedlAndroid` 版本引用,与 library 同版)。
-- 来源:Maven Central `.../youtubedl-android/ffmpeg/0.18.1/`(POM + AAR 均 HTTP 200;AAR ≈ **133 MB**,含 4 ABI 的 FFmpeg 原生库)。
-- 许可:POM 声明 **GPL-3.0**;打包的 FFmpeg 二进制另受 FFmpeg 上游许可(LGPL/GPL)。与项目 GPL-3.0 开源路线兼容。**归属声明属后续必办项(见范围外)**。
-- 新增传递依赖:`androidx.appcompat:1.4.2`、`commons-io:2.5`(纯 Compose 项目此前无 appcompat);core-ktx/kotlin-stdlib 由 Gradle 收敛到已有更高版本。
-- FFmpeg API 核实(源码 tag 0.18.1):`object com.yausername.ffmpeg.FFmpeg`,`@Synchronized fun init(appContext: Context)`,失败抛 `YoutubeDLException`。
+## A-1 —— 最小真实落盘(应用专属目录,零新权限)
 
-## 变更清单(4 个文件)
+- 复用「引擎自检(开发)」屏:在 probe 之后加「下载到应用目录」按钮,调用 `engine.download(request, onProgress)`,`outputDir = context.getExternalFilesDir(...)`(真实路径,无需权限)。
+- 进度回调驱动一个百分比文本;完成后显示落地文件路径。
+- 验收:真机点下载,文件出现在应用专属目录,自检屏显示进度→完成+路径。
+- 影响:无新依赖、无新权限、无服务;纯验证 download 链路 + 进度 + 取消。
 
-### 1. `android/gradle/libs.versions.toml`
-- `[libraries]` 增:`ffmpeg = { group = "io.github.junkfood02.youtubedl-android", name = "ffmpeg", version.ref = "youtubedlAndroid" }`
+## A-2 —— 前台服务 + 进度通知 + 可取消
 
-### 2. `android/app/build.gradle.kts`
-- `dependencies { }` 增:`implementation(libs.ffmpeg)`
-- `android { }` 增 ABI 分包(控住 133MB AAR → 每 ABI 独立 APK):
-  ```kotlin
-  splits {
-      abi {
-          isEnable = true
-          reset()
-          include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-          isUniversalApk = false
-      }
-  }
-  ```
-  保留现有 `ndk { abiFilters ... }` 与 `packaging { jniLibs { useLegacyPackaging = true } }`(ffmpeg 同样在运行时解压 `libffmpeg.zip.so`,需 legacy packaging)。
+- 新增 `DownloadService`(前台服务),把 A-1 的下载迁入;通知栏显示进度,通知上「取消」→ 结构化取消协程(→ 销毁 yt-dlp 进程)。
+- Manifest:`POST_NOTIFICATIONS`(运行时请求)、`FOREGROUND_SERVICE`、`FOREGROUND_SERVICE_DATA_SYNC`;`<service>` 声明。
+- 验收:息屏/切后台下载不中断,通知进度更新,通知取消生效。
 
-### 3. `.../engine/YoutubeDlEngine.kt`(init 收纳 ffmpeg)
-- `import com.yausername.ffmpeg.FFmpeg`
-- `init()` 内,`YoutubeDL.init(appContext)` 之后加 `FFmpeg.init(appContext)`,同一 `try` 捕获 `YoutubeDLException` → `EngineInitException`。
-- 边界:FFmpeg 完全封装在引擎实现内,UI/ViewModel 不接触(ADR §3/§8)。
+## A-3 —— 发布到 MediaStore(设备可见)
 
-### 4. `.../engine/EngineSmokeTest.kt`(文案)
-- 成功文案由"✓ 初始化成功"改为"✓ 初始化成功(yt-dlp + ffmpeg)",使真机自检能确认 ffmpeg 已就位。逻辑不变(init 现已含 ffmpeg)。
+- 下载完成后,把应用目录产物按类型 insert 进 MediaStore(视频→Movies、音频→Music,或统一 Downloads),写入后清理临时文件。
+- 删除语义落地:删记录 / 删临时 / 删媒体三者分离(对齐 §5 与原型「本地数据」文案)。
+- 验收:下载完成后在系统相册/文件看到媒体;三类删除行为正确区分。
 
-> `ui/dev/EngineSmokeScreen.kt` 无需改动 —— 它经 `EngineSmokeTest.run` 间接触发。
+## A-4 —— 接线到 UI 状态机(替换原型模拟)
 
-## 关联影响
+- 引入 `ViewModel`,把下载页链接输入 → 真实 probe → 格式选择 → 真实 download,任务页反映真实状态机(排队/下载/暂停/完成/失败/取消)。
+- 任务状态持久化的 Room 落地拆到后续(A-4 先内存态,Room 单列切片)。
+- 验收:从下载页发起真实任务,任务页/文件页反映真实进度与结果。
 
-- 体积:开 ABI splits 后产出 4 个按 ABI 分包的 APK,单包只含该 ABI 的 ffmpeg(~30–40MB 量级),而非全量 130MB+。若用户只需 arm64,可后续进一步收窄。
-- 依赖:+1 直接依赖(GPL-3.0)+ appcompat/commons-io 传递依赖。
-- 运行时:init 多一步解压 ffmpeg;probe 不受影响;**本切片无下载/后处理调用路径**。
-- 边界:无服务端/账号/云同步/远程日志;不涉及 Cookie。
+## 版本与治理
 
-## 回滚
+- 每片一个 `versionName`/`versionCode` 是否 bump 由用户定(当前维持 1.0)。
+- 每片:依赖(若有)先审、权限先审、构建/真机验收、§6 汇报。
+- 发布/签名/分发仍属独立阶段,另行书面批准。
 
-- 移除 `implementation(libs.ffmpeg)` + `ffmpeg` 库项 + `splits{}` + `YoutubeDlEngine.init` 里的 `FFmpeg.init` + 文案改回即可。
+## 建议起点
 
-## 验收(用户真机)
-
-1. 工作区改完 → Make 手动推送 → `git fetch origin` / `git reset --hard origin/main`。
-2. `cd android` → `.\gradlew.bat :app:assembleDebug` 构建成功;产物为按 ABI 分包的多个 APK(体积明显小于全量合包)。
-3. 装机(选对应 ABI 的 APK)→「更多 → 引擎自检(开发)」运行:显示"✓ 初始化成功(yt-dlp + ffmpeg)"+ 标题/时长。
-
-## 同批一并推送(非 D-002 代码,属收尾)
-
-- `docs/03-dependency-decision.md`:标注 D-001 library「已入 build」、登记 D-002 ffmpeg(版本/来源/许可/传递依赖/体积/ABI 决策)。
-- `PROGRESS.md`:同步 E-002 完成、E-003/D-002 进行中、版本号维持 1.0 的决定。
-
-## D-002 构建修正(打包 OOM)
-
-真机构建暴露两处 D-002 配套问题,均已定位:
-
-1. **`ndk.abiFilters` 与 `splits.abi` 冲突**(AGP 报 "Conflicting configuration")——已修:移除 `defaultConfig.ndk.abiFilters`,ABI 交由 `splits.abi` 统一接管(4 ABI 不变)。
-2. **`packageDebug` 抛 `OutOfMemoryError: Java heap space`**——把巨大的 `libffmpeg.zip.so`(legacy packaging 不压缩、载入内存)打进 4 个 ABI 分包时,Gradle 守护进程 2GB 堆不够。
-   - 修正文件:`android/gradle.properties`
-   - `org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8` → `-Xmx4096m`
-   - 回滚:改回 `-Xmx2048m`。
-   - 验收:`.\gradlew.bat :app:assembleDebug` 通过,产出按 ABI 分包 APK。
-
-## 不在本切片范围(后续另审)
-
-- **FFmpeg / 第三方 GPL 归属声明**:About 页「组件」区目前占位"后续显示第三方声明"——GPL-3.0 要求提供归属与源码获取途径,列为**必办的后续切片**(不阻塞本次构建,但发布前必须完成)。
-- 下载落盘 MVP(存储权限/MediaStore/前台服务)、ffmpeg 后处理的真实调用、ViewModel、Room、DataStore 扩展、security-crypto。
-- 进一步按需收窄 ABI(如仅 arm64-v8a)。
+先做 **A-1**(零权限、零依赖、复用现有自检屏),把 download+进度+取消在真机验证扎实,再逐步加服务与 MediaStore。

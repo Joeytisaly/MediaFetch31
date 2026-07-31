@@ -2,7 +2,7 @@
 
 **状态：草案（待审批）**
 **关联：** `docs/00-project-charter.md`（§3 不变量、§5 专项约束）、`docs/02-architecture.md`（ADR-001）、`docs/04-api-contract.md`、`docs/05-data-model.md`
-**核验日期：** 2026-07-31
+**核验日期：** 2026-08-01(D-002 ffmpeg、协程入 build 后更新)
 
 > 本文件按章程 §3「决策与研究规则」记录每个**外部依赖**的确切来源、版本、许可证与兼容依据。
 > 依赖事实一律来自官方来源（Maven Central / 源码仓库 / 官方 LICENSE），不臆测"最新版"。
@@ -30,14 +30,30 @@
 
 **兼容依据**：**已核验**（见 `docs/09-toolchain-gate.md`）。library 为 AAR,`minSdk 24` / `compileSdk 34`;MediaFetch30 现状 AGP `9.1.0` / Kotlin `2.4.10` / Gradle `9.3.1` / `compileSdk 36` / `minSdk 24`。结论:`minSdk` 相等、`compileSdk 36 ≥ 34`、新 AGP/Kotlin 消费旧 AAR 向后兼容 —— **无需降级即可承载 0.18.1**。
 
+**入 build 结论(D-001,已验证)**:`implementation(libs.youtubedl.android.library)` `0.18.1` 已加入,`assembleDebug` 通过,原生 libpython/libqjs 已打包;真机 init + probe 成功。
+
+### D-1a kotlinx-coroutines-android（引擎结构化并发,E-002 已入 build）
+
+| 项 | 值 | 来源/核验 |
+|---|---|---|
+| 用途 | 引擎适配层 suspend + `Dispatchers.IO` + 结构化取消(取消协程即销毁 yt-dlp 进程) | E-002 |
+| Maven 坐标 | `org.jetbrains.kotlinx:kotlinx-coroutines-android` | Maven Central |
+| 版本 | **`1.11.0`** | Maven Central `.../kotlinx-coroutines-android/1.11.0/`;GitHub Release tag 1.11.0 |
+| 许可证 | **Apache-2.0** | POM `<licenses>` 确认 |
+| 兼容依据 | 1.11.0 由 Kotlin 2.2.20 编译;项目 Kotlin 2.4.10 更新,元数据向前兼容 | Release notes |
+
 ### D-002 ffmpeg（youtubedl-android 附属,后处理/合流）
 
 | 项 | 值 | 来源/核验 |
 |---|---|---|
 | 用途 | 音视频合流、转封装等后处理(经引擎适配层封装,ADR §7) | ADR-001 |
 | Maven 坐标 | `io.github.junkfood02.youtubedl-android:ffmpeg` | 与 D-001 同 group |
-| 版本 | **[待审批]**(常规与 library 同步 `0.18.1`,但本次未逐一坐实 Maven 发布版本) | — |
-| 许可证 | 随附二进制许可(FFmpeg 及其编译选项的 LGPL/GPL 影响) **[待审批]** | 需在引入前单列 FFmpeg 构建与归属核验(章程 §5) |
+| 版本 | **`0.18.1`(已坐实,已入 build)** | Maven Central `.../ffmpeg/0.18.1/`(POM + AAR 均 HTTP 200;AAR ≈133MB,含 4 ABI 的 FFmpeg 原生库) |
+| 许可证 | **GPL-3.0**(POM `<licenses>` 声明)+ 随附 FFmpeg 二进制的上游 LGPL-2.1+/GPL 许可 | ffmpeg-0.18.1.pom 逐条确认;归属声明已落 About 页「开源与许可」 |
+| 传递依赖 | 新引入 `androidx.appcompat:1.4.2`、`commons-io:2.5`;core-ktx/kotlin-stdlib 由 Gradle 收敛到已有更高版本 | ffmpeg-0.18.1.pom `<dependencies>` |
+| API 核验 | `object com.yausername.ffmpeg.FFmpeg`,`@Synchronized fun init(appContext)`,失败抛 `YoutubeDLException` | 源码 tag 0.18.1 |
+
+**入 build 结论(E-003/D-002,已真机验证)**:`implementation(libs.ffmpeg)` 已加入;因 133MB AAR 采 **ABI splits 分包**(`splits.abi`,与 `abiFilters` 互斥故移除后者)、Gradle 堆调至 **`-Xmx4096m`**(打包大 `.so` 防 OOM)、Manifest 补 **`INTERNET` / `ACCESS_NETWORK_STATE`** 权限(yt-dlp 出网必需)。真机自检 init(yt-dlp + ffmpeg)+ probe 解析均通过。
 
 ### D-003 aria2c / 其他下载加速二进制
 
@@ -75,8 +91,8 @@
 ## 5. 本文件未决项（[待审批]，留待工具链闸门）
 
 1. ~~D-001 与 MediaFetch30 现有 Kotlin 2.4.10 / AGP 9.1 的官方兼容矩阵结论~~ —— **已闭合**,结论见 `docs/09-toolchain-gate.md`(无需降级即可承载 0.18.1)。
-2. D-002 ffmpeg 的精确 Maven 发布版本 + FFmpeg 二进制许可(LGPL/GPL)与归属文件。
-3. Room / 协程 / DataStore / Security-crypto(Keystore)等 Phase E 支撑库的精确版本与许可(下批随架构落地登记)。
+2. ~~D-002 ffmpeg 的精确 Maven 发布版本 + FFmpeg 二进制许可(LGPL/GPL)与归属文件~~ —— **已闭合**:`0.18.1` / GPL-3.0(POM)+ FFmpeg 上游 LGPL/GPL,归属已落 About 页(见 §1 D-002)。
+3. Room / DataStore / Security-crypto(Keystore)等 Phase E 支撑库的精确版本与许可(下批随架构落地登记)。**协程已闭合**:kotlinx-coroutines-android `1.11.0` / Apache-2.0(见 §1 D-1a)。
 4. 是否需要 yt-dlp 自更新机制(章程 §5 禁止自行二进制下载更新;如需,须新方案审批)。
 
 ## 6. 结论
