@@ -66,6 +66,17 @@ ffmpeg 用于下载 DASH 分离流后的音视频合并/格式转换。本切片
 - `docs/03-dependency-decision.md`:标注 D-001 library「已入 build」、登记 D-002 ffmpeg(版本/来源/许可/传递依赖/体积/ABI 决策)。
 - `PROGRESS.md`:同步 E-002 完成、E-003/D-002 进行中、版本号维持 1.0 的决定。
 
+## D-002 构建修正(打包 OOM)
+
+真机构建暴露两处 D-002 配套问题,均已定位:
+
+1. **`ndk.abiFilters` 与 `splits.abi` 冲突**(AGP 报 "Conflicting configuration")——已修:移除 `defaultConfig.ndk.abiFilters`,ABI 交由 `splits.abi` 统一接管(4 ABI 不变)。
+2. **`packageDebug` 抛 `OutOfMemoryError: Java heap space`**——把巨大的 `libffmpeg.zip.so`(legacy packaging 不压缩、载入内存)打进 4 个 ABI 分包时,Gradle 守护进程 2GB 堆不够。
+   - 修正文件:`android/gradle.properties`
+   - `org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8` → `-Xmx4096m`
+   - 回滚:改回 `-Xmx2048m`。
+   - 验收:`.\gradlew.bat :app:assembleDebug` 通过,产出按 ABI 分包 APK。
+
 ## 不在本切片范围(后续另审)
 
 - **FFmpeg / 第三方 GPL 归属声明**:About 页「组件」区目前占位"后续显示第三方声明"——GPL-3.0 要求提供归属与源码获取途径,列为**必办的后续切片**(不阻塞本次构建,但发布前必须完成)。
