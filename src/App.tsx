@@ -50,8 +50,8 @@ function GlassRow({ label, icon }: { label: string; icon: IconName }) {
 }
 
 function BottomNav({ tab, onChange }: { tab: Tab; onChange: (tab: Tab) => void }) {
-  const items: Array<[Tab, IconName, string]> = [['downloads', 'power', '下载'], ['files', 'infinity', '文件'], ['settings', 'more', '更多']]
-  return <nav className="absolute bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 w-[74%] -translate-x-1/2 rounded-full p-1.5 tcp-glass" aria-label="主导航"><div className="flex justify-between">{items.map(([value, icon, label]) => <button type="button" key={value} onClick={() => onChange(value)} aria-current={tab === value ? 'page' : undefined} aria-label={label} className={`grid h-12 w-12 place-items-center rounded-full transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tcp-primary)] ${tab === value ? 'bg-[var(--tcp-primary-wash)] text-[var(--tcp-primary)] shadow-[inset_0_0_0_1px_rgba(237,29,85,.2)]' : 'text-[var(--tcp-muted)] hover:bg-white/60'}`}><Icon name={icon} size={25} /></button>)}</div></nav>
+  const items: Array<[Tab, IconName, string]> = [['downloads', 'power', '下载'], ['files', 'link', '文件'], ['settings', 'more', '更多']]
+  return <nav className="absolute bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 w-[90%] -translate-x-1/2 rounded-full px-4 py-1.5 tcp-glass" aria-label="主导航"><div className="flex items-center justify-between">{items.map(([value, icon, label]) => <button type="button" key={value} onClick={() => onChange(value)} aria-current={tab === value ? 'page' : undefined} aria-label={label} className={`grid h-12 w-12 place-items-center rounded-full transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tcp-primary)] ${tab === value ? 'bg-[var(--tcp-primary-wash)] text-[var(--tcp-primary)]' : 'text-[var(--tcp-muted)] hover:bg-white/60'}`}><Icon name={icon} size={25} /></button>)}</div></nav>
 }
 
 
