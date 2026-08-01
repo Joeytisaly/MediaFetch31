@@ -1,5 +1,11 @@
 package com.tcpg007014.tcpgyt.ui.dev
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +33,8 @@ import com.tcpg007014.tcpgyt.engine.DownloadResult
 import com.tcpg007014.tcpgyt.engine.EngineSmokeTest
 import com.tcpg007014.tcpgyt.engine.EngineUpdateStatus
 import com.tcpg007014.tcpgyt.engine.YoutubeDlEngine
+import com.tcpg007014.tcpgyt.service.DownloadService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -57,6 +65,21 @@ fun EngineSmokeScreen() {
     var downloadResult by remember { mutableStateOf("") }
     var downloadJob by remember { mutableStateOf<Job?>(null) }
     var currentTaskId by remember { mutableStateOf<String?>(null) }
+
+    // A-2:后台下载(前台服务)。启动服务后进度/取消由通知栏承载。
+    val startDownloadService = {
+        val intent = Intent(context, DownloadService::class.java).apply {
+            action = DownloadService.ACTION_START
+            putExtra(DownloadService.EXTRA_URL, url.trim())
+        }
+        ContextCompat.startForegroundService(context, intent)
+    }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        // 无论是否授予通知权限都启动下载;未授予时通知可能不显示,但后台下载仍进行。
+        startDownloadService()
+    }
 
     Column(
         modifier = Modifier
@@ -169,6 +192,9 @@ fun EngineSmokeScreen() {
                             DownloadResult.Canceled -> "已取消"
                             is DownloadResult.Failure -> "✗ 下载失败:${outcome.message}"
                         }
+                    } catch (e: CancellationException) {
+                        // 协程被取消:交回上层处理,不当作下载出错。
+                        throw e
                     } catch (e: Exception) {
                         downloadResult = "✗ 下载出错:${e.message ?: e.javaClass.simpleName}"
                     } finally {
@@ -184,9 +210,9 @@ fun EngineSmokeScreen() {
         if (downloading) {
             Button(
                 onClick = {
-                    // 直接销毁底层进程(execute 阻塞、不感知协程取消),再取消协程收尾。
+                    // 只销毁底层进程;download 内部会捕获 CanceledException 并返回「已取消」,
+                    // 不取消协程(避免 CancellationException 被当成下载出错)。
                     currentTaskId?.let { engine.cancel(it) }
-                    downloadJob?.cancel()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -198,6 +224,27 @@ fun EngineSmokeScreen() {
         }
         if (downloadResult.isNotEmpty()) {
             Text(downloadResult, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        }
+
+        // ——— A-2:后台下载(前台服务 + 通知) ———
+        Text(
+            "在前台服务中下载:切后台/息屏不中断,进度与取消都在通知栏。",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Button(
+            onClick = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    startDownloadService()
+                }
+            },
+            enabled = url.isNotBlank(),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("后台下载(前台服务)")
         }
     }
 }
