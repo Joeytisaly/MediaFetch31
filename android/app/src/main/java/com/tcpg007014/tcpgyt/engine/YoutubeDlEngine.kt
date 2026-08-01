@@ -59,6 +59,9 @@ class YoutubeDlEngine(private val appContext: Context) : DownloadEngine {
         val ytRequest = YoutubeDLRequest(request.url).apply {
             // 输出模板:标题.扩展名,写入指定目录
             addOption("-o", "${request.outputDir}/%(title)s.%(ext)s")
+            // 不续传残留片段(避免 .part 残片导致 HTTP 416),并覆盖同名文件。
+            addOption("--no-continue")
+            addOption("--force-overwrites")
         }
         // 结构化取消:协程被取消时销毁底层进程(execute 为阻塞调用,自身不感知协程取消)。
         val cancelHandle = coroutineContext[Job]?.invokeOnCompletion { cause ->

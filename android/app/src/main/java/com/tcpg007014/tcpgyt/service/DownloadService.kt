@@ -149,6 +149,7 @@ class DownloadService : Service() {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("下载")
             .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text)) // 长文本(如失败原因)可展开看全
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
             .setAutoCancel(true)
             .build()
