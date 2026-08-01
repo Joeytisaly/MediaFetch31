@@ -13,6 +13,8 @@ import androidx.core.app.NotificationCompat
 import com.tcpg007014.tcpgyt.engine.DownloadRequest
 import com.tcpg007014.tcpgyt.engine.DownloadResult
 import com.tcpg007014.tcpgyt.engine.YoutubeDlEngine
+import com.tcpg007014.tcpgyt.storage.MediaStorePublisher
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,9 +42,9 @@ class DownloadService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_CANCEL -> {
+                // 只销毁底层进程;download 会捕获 CanceledException 返回 Canceled,
+                // 由下载协程收尾停服。不额外 job.cancel()(否则会被当成「下载出错」)。
                 taskId?.let { engine.cancel(it) }
-                job?.cancel()
-                // 取消后 download 会返回 Canceled,由下载协程的 finally 收尾;此处不重复停服。
             }
             else -> {
                 val url = intent?.getStringExtra(EXTRA_URL)?.trim().orEmpty()
@@ -59,6 +61,9 @@ class DownloadService : Service() {
     private fun start(url: String) {
         createChannel()
         startForegroundCompat(buildProgress("准备中…", indeterminate = true, percent = 0f))
+        // 禁止并发:已有下载在进行时,重复启动只刷新前台通知,不再新起协程,
+        // 避免旧下载进程失去 taskId 引用而无法取消(A-2 缺陷修正)。
+        if (job?.isActive == true) return
         val id = UUID.randomUUID().toString()
         taskId = id
         job = scope.launch {
@@ -76,7 +81,7 @@ class DownloadService : Service() {
                     updateProgress(buildProgress(text, indeterminate = percent < 0f, percent = percent))
                 }
                 when (outcome) {
-                    is DownloadResult.Success -> "下载完成"
+                    is DownloadResult.Success -> publishProduced(outputDir)
                     DownloadResult.Canceled -> "已取消"
                     is DownloadResult.Failure -> "下载失败:${outcome.message}"
                 }
@@ -87,6 +92,29 @@ class DownloadService : Service() {
             stopForegroundAndSelf()
         }
     }
+
+    /**
+     * 下载成功后:定位产出文件 → 发布到公共媒体库 → **删临时**(删应用目录副本)。
+     *
+     * 删除语义分离(§5):此处只做「删临时」;「删记录 / 删媒体」依赖任务表(Room)与
+     * 文件管理 UI,属后续切片,不在本片混入。
+     */
+    private suspend fun publishProduced(outputDir: String): String {
+        val produced = findProducedFile(File(outputDir))
+            ?: return "下载完成(未找到产出文件)"
+        return try {
+            val where = MediaStorePublisher.publish(applicationContext, produced)
+            produced.delete() // 删临时:应用目录副本
+            "已保存到:$where"
+        } catch (e: Exception) {
+            "下载完成,但保存到公共目录失败:${e.message ?: e.javaClass.simpleName}(文件仍在应用目录)"
+        }
+    }
+
+    /** 取应用目录中最新的非中间文件(排除 .part / .ytdl 临时片段)。 */
+    private fun findProducedFile(dir: File): File? =
+        dir.listFiles { f -> f.isFile && !f.name.endsWith(".part") && !f.name.endsWith(".ytdl") }
+            ?.maxByOrNull { it.lastModified() }
 
     // ——— 通知 ———
 

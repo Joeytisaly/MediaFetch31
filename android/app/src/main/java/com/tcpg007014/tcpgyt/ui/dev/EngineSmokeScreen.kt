@@ -80,6 +80,13 @@ fun EngineSmokeScreen() {
         // 无论是否授予通知权限都启动下载;未授予时通知可能不显示,但后台下载仍进行。
         startDownloadService()
     }
+    // A-3:安卓 9 及以下需存储权限才能发布到公共媒体库。
+    val storagePermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        // 未授予时仍启动下载;文件会留在应用私有目录,只是无法发布到公共目录。
+        startDownloadService()
+    }
 
     Column(
         modifier = Modifier
@@ -235,10 +242,12 @@ fun EngineSmokeScreen() {
         )
         Button(
             onClick = {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                } else {
-                    startDownloadService()
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ->
+                        storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    else -> startDownloadService()
                 }
             },
             enabled = url.isNotBlank(),
