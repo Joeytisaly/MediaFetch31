@@ -30,5 +30,14 @@ sealed interface DownloadResult {
     data class Failure(val message: String) : DownloadResult
 }
 
+/** yt-dlp 内核更新结果状态。 */
+enum class EngineUpdateStatus { UPDATED, ALREADY_LATEST }
+
+/** yt-dlp 内核更新结果(状态 + 更新后版本)。 */
+data class EngineUpdate(
+    val status: EngineUpdateStatus,
+    val version: String?,
+)
+
 /** 引擎初始化失败。 */
 class EngineInitException(message: String, cause: Throwable? = null) : Exception(message, cause)

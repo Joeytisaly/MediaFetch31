@@ -43,6 +43,18 @@ E-001~E-003 已让引擎(suspend + 结构化取消)+ yt-dlp + ffmpeg 在真机�
 - 每片:依赖(若有)先审、权限先审、构建/真机验收、§6 汇报。
 - 发布/签名/分发仍属独立阶段,另行书面批准。
 
+## A-1b —— yt-dlp 内核更新(已批准,解 YouTube 403)
+
+真机验证发现内置 yt-dlp(2025.11.12,>90 天)解不开 YouTube n-challenge,所有下载 403 Forbidden。用 youtubedl-android 自带官方方法 `YoutubeDL.updateYoutubeDL(ctx, UpdateChannel.STABLE)`(拉 yt-dlp 官方 Release)更新;仅用户主动触发,无后台/自动更新。同时修 A-1 的进度 -1 显示与取消响应。
+
+改 4 文件:
+- `engine/EngineModels.kt` — 加 `enum EngineUpdateStatus { UPDATED, ALREADY_LATEST }` + `data class EngineUpdate(status, version)`
+- `engine/DownloadEngine.kt` — 接口加 `suspend fun update(): EngineUpdate`
+- `engine/YoutubeDlEngine.kt` — 实现 `update()`(IO 调 `updateYoutubeDL` + `version`)
+- `ui/dev/EngineSmokeScreen.kt` — 加「更新 yt-dlp 内核」按钮;进度 -1→「准备中…」;取消改直接 `engine.cancel(taskId)`
+
+无新依赖/权限,版本维持 1.0。
+
 ## 建议起点
 
 先做 **A-1**(零权限、零依赖、复用现有自检屏),把 download+进度+取消在真机验证扎实,再逐步加服务与 MediaStore。

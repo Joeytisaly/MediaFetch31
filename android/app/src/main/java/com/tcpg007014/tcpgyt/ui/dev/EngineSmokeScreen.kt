@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.tcpg007014.tcpgyt.engine.DownloadRequest
 import com.tcpg007014.tcpgyt.engine.DownloadResult
 import com.tcpg007014.tcpgyt.engine.EngineSmokeTest
+import com.tcpg007014.tcpgyt.engine.EngineUpdateStatus
 import com.tcpg007014.tcpgyt.engine.YoutubeDlEngine
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -40,15 +41,22 @@ import java.util.UUID
 fun EngineSmokeScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    // 单一引擎实例,便于取消按钮直接调用 engine.cancel(taskId)。
+    val engine = remember { YoutubeDlEngine(context.applicationContext) }
     var url by remember { mutableStateOf("https://www.youtube.com/watch?v=aqz-KE-bpKQ") }
     var running by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf("") }
+
+    // A-1b:yt-dlp 内核更新(仅用户主动触发)。
+    var updating by remember { mutableStateOf(false) }
+    var updateResult by remember { mutableStateOf("") }
 
     // A-1:真实下载到应用专属目录(零权限),验证 download + 进度 + 取消链路。
     var downloading by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf("") }
     var downloadResult by remember { mutableStateOf("") }
     var downloadJob by remember { mutableStateOf<Job?>(null) }
+    var currentTaskId by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -89,6 +97,41 @@ fun EngineSmokeScreen() {
             Text(result, fontSize = 14.sp, fontWeight = FontWeight.Medium)
         }
 
+        // ——— A-1b:更新 yt-dlp 内核(解 YouTube 403) ———
+        Text(
+            "从 yt-dlp 官方更新内置内核(仅本次点击触发)。内置版本过期时 YouTube 会返回 403,更新后可解。",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Button(
+            onClick = {
+                updating = true
+                updateResult = ""
+                scope.launch {
+                    updateResult = try {
+                        engine.init()
+                        val update = engine.update()
+                        when (update.status) {
+                            EngineUpdateStatus.UPDATED -> "✓ 已更新到 ${update.version ?: "最新版"}"
+                            EngineUpdateStatus.ALREADY_LATEST -> "已是最新(${update.version ?: "未知版本"})"
+                        }
+                    } catch (e: Exception) {
+                        "✗ 更新失败:${e.message ?: e.javaClass.simpleName}"
+                    } finally {
+                        updating = false
+                    }
+                }
+            },
+            enabled = !updating,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(if (updating) "更新中…" else "更新 yt-dlp 内核")
+        }
+        if (updateResult.isNotEmpty()) {
+            Text(updateResult, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        }
+
         // ——— A-1:下载到应用专属目录 ———
         Text(
             "下载到应用专属目录(无需存储权限)。用于验证真实 download 链路与进度、取消。",
@@ -102,17 +145,23 @@ fun EngineSmokeScreen() {
                 progress = ""
                 downloadResult = ""
                 val outputDir = context.getExternalFilesDir(null)!!.absolutePath
+                val taskId = UUID.randomUUID().toString()
+                currentTaskId = taskId
                 downloadJob = scope.launch {
-                    val engine = YoutubeDlEngine(context.applicationContext)
                     try {
                         engine.init()
                         val request = DownloadRequest(
-                            taskId = UUID.randomUUID().toString(),
+                            taskId = taskId,
                             url = url.trim(),
                             outputDir = outputDir,
                         )
                         val outcome = engine.download(request) { percent, eta, _ ->
-                            progress = "进度:%.1f%%  剩余约 %d 秒".format(percent, eta)
+                            // yt-dlp 在解析/预处理阶段回调 -1(未知),此时显示「准备中…」。
+                            progress = if (percent < 0f) {
+                                "准备中…"
+                            } else {
+                                "进度:%.1f%%  剩余约 %d 秒".format(percent, eta.coerceAtLeast(0))
+                            }
                         }
                         downloadResult = when (outcome) {
                             is DownloadResult.Success ->
@@ -134,7 +183,11 @@ fun EngineSmokeScreen() {
         }
         if (downloading) {
             Button(
-                onClick = { downloadJob?.cancel() },
+                onClick = {
+                    // 直接销毁底层进程(execute 阻塞、不感知协程取消),再取消协程收尾。
+                    currentTaskId?.let { engine.cancel(it) }
+                    downloadJob?.cancel()
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("取消下载")

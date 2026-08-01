@@ -19,6 +19,13 @@ interface DownloadEngine {
     suspend fun probe(url: String): MediaProbe
 
     /**
+     * 更新底层 yt-dlp 内核到官方最新稳定版(仅用户主动触发,无后台/自动更新)。
+     * 须在 [init] 之后调用。
+     * @return 更新结果(已更新 / 已是最新,含更新后版本号)。
+     */
+    suspend fun update(): EngineUpdate
+
+    /**
      * 启动一次下载。协程被取消时,底层进程会被结构化销毁。
      *
      * @param request 下载请求(含任务标识、URL、输出目录)。

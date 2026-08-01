@@ -39,6 +39,19 @@ class YoutubeDlEngine(private val appContext: Context) : DownloadEngine {
         )
     }
 
+    override suspend fun update(): EngineUpdate = withContext(Dispatchers.IO) {
+        // 仅用户主动触发;从 yt-dlp 官方 Release(STABLE 频道)更新内置内核。
+        val status = YoutubeDL.updateYoutubeDL(appContext, YoutubeDL.UpdateChannel.STABLE)
+        EngineUpdate(
+            status = if (status == YoutubeDL.UpdateStatus.DONE) {
+                EngineUpdateStatus.UPDATED
+            } else {
+                EngineUpdateStatus.ALREADY_LATEST
+            },
+            version = YoutubeDL.version(appContext),
+        )
+    }
+
     override suspend fun download(
         request: DownloadRequest,
         onProgress: (percent: Float, etaSeconds: Long, line: String) -> Unit,
